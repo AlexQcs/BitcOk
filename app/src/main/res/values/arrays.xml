@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="matrix_category">
+        <item>HDMI</item>
+        <item>VGA</item>
+        <item>DVI</item>
+        <item>YPbPr</item>
+    </string-array>
+    
+    <string-array name="matrix_fac">
+        <item>GTC001</item>
+        <item>GTC002</item>
+        <item>HDMI0808</item>
+    </string-array>
+
+
+    
+</resources>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.codetail.widget.RevealFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/activity_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@color/white"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/llPutLables"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#232324"
+                android:orientation="vertical">
+                <!--android:layout_weight="1"-->
+
+
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="#ffffff"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="电源开关"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/PrimaryText"/>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/btnOn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/btn_style"
+                                android:shadowColor="#ffffff"
+                                android:text="开机"
+                                android:textColor="#ffffff"/>
+
+                            <Button
+                                android:id="@+id/btnOff"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/btn_style"
+                                android:text="关机"
+                                android:textColor="#ffffff"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="信号控制"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/PrimaryText"/>
+
+                        <Switch
+                            android:id="@+id/swSFWall"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:autoText="false"
+                            android:text="    单屏"
+                            android:textColor="@color/PrimaryText"/>
+
+                        <TableLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                            <TableRow
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent">
+
+                                <Button
+                                    android:id="@+id/btnAV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="0"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="AV"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnVGA"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="1"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="VGA"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnDVI"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="2"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="DVI"
+                                    android:textColor="#ffffff"/>
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent">
+
+                                <Button
+                                    android:id="@+id/btnHDMI"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="0"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="HDMI"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnAV2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="1"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="AV2"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnDP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="2"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="DP"
+                                    android:textColor="#ffffff"/>
+                            </TableRow>
+                        </TableLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff"
+                        android:orientation="vertical">
+                        <!--android:background="@drawable/boder"-->
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="模式调用"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/PrimaryText"/>
+
+                        <TableLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="match_parent">
+
+                            <TableRow
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content">
+
+                                <Button
+                                    android:id="@+id/btnPlan1"
+                                    android:layout_width="1dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="0"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="1"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan2"
+                                    android:layout_width="1dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="1"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="2"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan3"
+                                    android:layout_width="1dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="2"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="3"
+                                    android:textColor="#ffffff"/>
+
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content">
+
+                                <Button
+                                    android:id="@+id/btnPlan4"
+                                    android:layout_width="1dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="0"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="4"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="1"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="5"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="2"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="6"
+                                    android:textColor="#ffffff"/>
+
+
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content">
+
+                                <Button
+                                    android:id="@+id/btnPlan7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="0"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="7"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan8"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="1"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="8"
+                                    android:textColor="#ffffff"/>
+
+                                <Button
+                                    android:id="@+id/btnPlan9"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_column="2"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_style"
+                                    android:text="9"
+                                    android:textColor="#ffffff"/>
+
+
+                            </TableRow>
+                        </TableLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</io.codetail.widget.RevealFrameLayout>
+

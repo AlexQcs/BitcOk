@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:gravity="center_vertical"
+              android:layout_width="match_parent"
+
+              android:layout_height="wrap_content">
+    <LinearLayout
+        style="@style/SpinnerLin">
+        <TextView
+            android:text="矩阵类型:"
+            style="@style/SpinnerInfoTextView"/>
+        <com.hc.wallcontrl.view.nicespinner.NiceSpinner
+            android:textSize="25sp"
+            android:id="@+id/spinner_matrix_category"
+            android:entries="@array/matrix_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+        <TextView
+            android:text="矩阵厂家:"
+            android:entries="@array/matrix_fac"
+            style="@style/SpinnerInfoTextView"/>
+        <com.hc.wallcontrl.view.nicespinner.NiceSpinner
+            android:textSize="25dp"
+            android:id="@+id/spinner_matrix_factory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+        <TextView
+            android:text="输入总数:"
+            style="@style/SpinnerInfoTextView"/>
+        <EditText
+            android:text="0"
+            android:id="@+id/etv_input_quantity"
+            style="@style/DialogEditText"/>
+        <TextView
+            android:text="个"
+            style="@style/SpinnerInfoTextView"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+        <TextView
+            android:text="设备地址:"
+            style="@style/SpinnerInfoTextView"/>
+
+        <EditText
+            android:id="@+id/etv_delay_time"
+            style="@style/DialogEditText"
+            android:text="0"/>
+
+        <TextView
+            android:text="ms"
+            style="@style/SpinnerInfoTextView"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+        <Button
+            android:text="取消"
+            android:id="@+id/btn_cancel"
+            style="@style/DialogButton"/>
+        <Button
+            android:text="确定"
+            android:id="@+id/btn_confirm"
+            android:layout_marginLeft="10dp"
+            style="@style/DialogButton"/>
+    </LinearLayout>
+
+    
+</LinearLayout>
