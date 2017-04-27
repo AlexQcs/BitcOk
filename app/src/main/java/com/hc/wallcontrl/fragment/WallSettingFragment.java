@@ -23,7 +23,9 @@ import com.hc.wallcontrl.util.ConstUtils;
 import com.hc.wallcontrl.view.MyTable;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,12 +70,33 @@ public class WallSettingFragment extends BaseFragment {
 
     @Override
     public void takeScreenShot() {
-        View view = inflateView;
-        Observable.just(view)
-                .map(inflateView -> Bitmap.createBitmap(inflateView.getWidth(), inflateView.getHeight(), Bitmap.Config.ARGB_8888))
-                .map(bitmap -> new Canvas(bitmap))
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(canvas -> inflateView.draw(canvas));
+        View mView=inflateView;
+
+        Observable.just(mView)
+                .map(new Func1<View, Canvas>() {
+                    @Override
+                    public Canvas call(View view) {
+                        Bitmap bitmap=Bitmap.createBitmap(view.getWidth(),view.getHeight(),Bitmap.Config.ARGB_8888);
+                        Canvas canvas=new Canvas(bitmap);
+                        return canvas;
+                    }
+                }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Canvas>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Canvas canvas) {
+                        mView.draw(canvas);
+                    }
+                });
     }
 
     @Override

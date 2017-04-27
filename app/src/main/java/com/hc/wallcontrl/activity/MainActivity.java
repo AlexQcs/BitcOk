@@ -1,6 +1,7 @@
 package com.hc.wallcontrl.activity;
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -24,6 +25,7 @@ import com.hc.wallcontrl.fragment.ConnFragment;
 import com.hc.wallcontrl.fragment.ControlFragment;
 import com.hc.wallcontrl.fragment.MatrixFragment;
 import com.hc.wallcontrl.fragment.WallSettingFragment;
+import com.hc.wallcontrl.service.SocketService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,9 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
 
     void initData() {
         createMenuList();
+        Intent intent=new Intent();
+        intent.setClass(MainActivity.this, SocketService.class);
+        startService(intent);
     }
 
     private void createMenuList() {
@@ -166,19 +171,19 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
                 return screenShotable;
             case BaseFragment.CONN:
                 mTvToolbarText.setText("连接");
-                return replaceFragment(ConnFragment.newInstance(),position);
+                return replaceFragment(ConnFragment.newInstance(), position);
             case BaseFragment.MAIN:
                 mTvToolbarText.setText("控制");
-                return replaceFragment(ControlFragment.newInstance(),position);
+                return replaceFragment(ControlFragment.newInstance(), position);
             case BaseFragment.WALL:
                 mTvToolbarText.setText("幕墙设置");
-                return replaceFragment(WallSettingFragment.newInstance(),position);
-            case  BaseFragment.MATRIX:
+                return replaceFragment(WallSettingFragment.newInstance(), position);
+            case BaseFragment.MATRIX:
                 mTvToolbarText.setText("矩阵");
-                return replaceFragment(MatrixFragment.newInstance(),position);
+                return replaceFragment(MatrixFragment.newInstance(), position);
             default:
                 return replaceFragment(screenShotable, position);
-
+//                return null;
         }
     }
 

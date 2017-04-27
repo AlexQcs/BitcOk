@@ -35,6 +35,7 @@
             android:name=".activity.SettingActivity"
             android:label="@string/title_activity_setting">
         </activity>
+        <service android:name=".service.SocketService"></service>
     </application>
 
 </manifest>

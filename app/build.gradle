@@ -5,13 +5,20 @@ repositories {
         url "https://jitpack.io"
     }
 }
+repositories {
+    maven {
+        repositories {
+            url 'https://oss.sonatype.org/content/repositories/releases/'
+        }
+    }
+}
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.hc.wallcontrl"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
         versionName "1.0.4.3"
@@ -56,4 +63,5 @@ dependencies {
     compile 'com.kyleduo.switchbutton:library:1.4.5'
     compile 'io.reactivex:rxjava:1.2.9'
     compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.badoo.mobile:android-weak-handler:1.1'
 }

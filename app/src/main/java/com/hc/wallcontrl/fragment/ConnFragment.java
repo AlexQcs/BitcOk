@@ -2,6 +2,7 @@ package com.hc.wallcontrl.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
+import com.hc.wallcontrl.service.SocketService;
 import com.hc.wallcontrl.util.ConstUtils;
 import com.hc.wallcontrl.util.LogUtil;
 import com.hc.wallcontrl.util.StringUtils;
@@ -21,7 +23,9 @@ import com.hc.wallcontrl.util.ToastUtil;
 import com.kyleduo.switchbutton.SwitchButton;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,6 +87,7 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
         mSwitchIsConn.setAnimationDuration(500);
 
         mSwitchIsConn.setOnCheckedChangeListener(this);
+        mSwitchIsConn.setOnCheckedChangeListener(this);
 
 
         mEditIP.setText(mIPStr);
@@ -104,12 +109,33 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
 
     @Override
     public void takeScreenShot() {
-        View view=inflateView;
-        Observable.just(view)
-                .map(inflateView->Bitmap.createBitmap(inflateView.getWidth(),inflateView.getHeight(),Bitmap.Config.ARGB_8888))
-                .map(bitmap -> new Canvas(bitmap))
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(canvas -> inflateView.draw(canvas));
+        View mView=inflateView;
+
+        Observable.just(mView)
+                .map(new Func1<View, Canvas>() {
+                    @Override
+                    public Canvas call(View view) {
+                        Bitmap bitmap=Bitmap.createBitmap(view.getWidth(),view.getHeight(),Bitmap.Config.ARGB_8888);
+                        Canvas canvas=new Canvas(bitmap);
+                        return canvas;
+                    }
+                }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Canvas>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Canvas canvas) {
+                        mView.draw(canvas);
+                    }
+                });
     }
 
 
@@ -121,10 +147,9 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mIsConnected=isChecked;
-        Log.e("onCheckedChanged","进入方法");
         if (isChecked){
-
+            mIPStr=mEditIP.getText().toString().trim();
+            mPortStr=mEditPort.getText().toString().trim();
             if (!StringUtils.checkIp(mIPStr)){
                 ToastUtil.showShortMessage("请输出正确的ip地址");
                 LogUtil.e("onCheckedChanged","请输出正确的ip地址");
@@ -135,6 +160,20 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
                 LogUtil.e("onCheckedChanged","请输入正确的端口");
                 mSwitchIsConn.setChecked(false);
             }
+            mIsConnected=mSwitchIsConn.isChecked();
+            if (mIsConnected){
+                Log.e("是否成功开启",mIsConnected+"");
+                Intent intent=new Intent();
+                intent.setAction(ConstUtils.ACTION_CONN);
+                intent.putExtra("ip",mIPStr);
+                intent.putExtra("port",Integer.parseInt(mPortStr));
+                mContext.sendBroadcast(intent);
+            }
+
+        }else {
+            Intent intent=new Intent(mContext, SocketService.class);
+            intent.setAction(ConstUtils.ACTION_CLOSE);
+            mContext.sendBroadcast(intent);
         }
     }
 }
