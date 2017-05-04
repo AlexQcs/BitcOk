@@ -70,6 +70,13 @@
         <item name="@android:windowExitAnimation">@anim/dialog_matrix_exit</item>
     </style>
 
+    <style name="InfoTextView">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/released</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 
 </resources>
 

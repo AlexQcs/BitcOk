@@ -7,11 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.hc.wallcontrl.R;
-import com.hc.wallcontrl.view.nicespinner.NiceSpinner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,10 +23,12 @@ import java.util.List;
 
 public class MatrixSettingDialog extends Dialog {
 
-    private NiceSpinner mMatrixCateSpinner;
-    private NiceSpinner mMatrixFacSpinner;
+    private Spinner mMatrixCateSpinner;
+    private Spinner mMatrixFacSpinner;
+    private DropEditText mDropEditStream;
     private EditText mInputQuanEtv;
     private EditText mDelayTimeEtv;
+    private EditText mAddrEtv;
     private Button mCancelBtn;
     private Button mConfirmBtn;
 
@@ -33,6 +36,7 @@ public class MatrixSettingDialog extends Dialog {
 
     private int mIntputQuan;
     private int mDelayTime;
+    private int mAddr;
     private String mMatrixFactory;
     private String mMatrixCategory;
     private List<String> mCateList;
@@ -61,6 +65,14 @@ public class MatrixSettingDialog extends Dialog {
         mDelayTime = delayTime;
     }
 
+    public int getAddr() {
+        return mAddr;
+    }
+
+    public void setAddr(int addr) {
+        mAddr = addr;
+    }
+
     public String getMatrixFactory() {
         return mMatrixFactory;
     }
@@ -79,27 +91,27 @@ public class MatrixSettingDialog extends Dialog {
 
     public MatrixSettingDialog(@NonNull Context context) {
         super(context);
-        mContext=context;
+        mContext = context;
     }
 
     public MatrixSettingDialog(@NonNull Context context, @StyleRes int themeResId) {
-        super(context,themeResId);
-        mContext=context;
+        super(context, themeResId);
+        mContext = context;
     }
 
-    public NiceSpinner getMatrixCateSpinner() {
+    public Spinner getMatrixCateSpinner() {
         return mMatrixCateSpinner;
     }
 
-    public void setMatrixCateSpinner(NiceSpinner matrixCateSpinner) {
+    public void setMatrixCateSpinner(Spinner matrixCateSpinner) {
         mMatrixCateSpinner = matrixCateSpinner;
     }
 
-    public NiceSpinner getMatrixFacSpinner() {
+    public Spinner getMatrixFacSpinner() {
         return mMatrixFacSpinner;
     }
 
-    public void setMatrixFacSpinner(NiceSpinner matrixFacSpinner) {
+    public void setMatrixFacSpinner(Spinner matrixFacSpinner) {
         mMatrixFacSpinner = matrixFacSpinner;
     }
 
@@ -115,6 +127,14 @@ public class MatrixSettingDialog extends Dialog {
         return mDelayTimeEtv;
     }
 
+    public EditText getAddrEtv() {
+        return mAddrEtv;
+    }
+
+    public void setAddrEtv(EditText addrEtv) {
+        mAddrEtv = addrEtv;
+    }
+
     public void setDelayTimeEtv(EditText delayTimeEtv) {
         mDelayTimeEtv = delayTimeEtv;
     }
@@ -124,18 +144,18 @@ public class MatrixSettingDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setting_matrix);
         setCanceledOnTouchOutside(false);
-        
+
         initView();
         initData();
         initEvent();
-        
+
     }
 
     private void initEvent() {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnCancelClickListener!=null){
+                if (mOnCancelClickListener != null) {
                     mOnCancelClickListener.onClick();
                 }
             }
@@ -144,11 +164,12 @@ public class MatrixSettingDialog extends Dialog {
         mConfirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIntputQuan=Integer.parseInt(mInputQuanEtv.getText().toString());
-                mDelayTime=Integer.parseInt(mDelayTimeEtv.getText().toString());
-                mMatrixCategory=mCateList.get(mMatrixCateSpinner.getSelectedIndex());
-                mMatrixFactory=mFacList.get(mMatrixFacSpinner.getSelectedIndex());
-                if (mOnConfirmClickListener!=null){
+                mIntputQuan = Integer.parseInt(mInputQuanEtv.getText().toString());
+                mDelayTime = Integer.parseInt(mDelayTimeEtv.getText().toString());
+                mAddr = Integer.parseInt(mAddrEtv.getText().toString());
+                mMatrixCategory = mCateList.get(mMatrixCateSpinner.getSelectedItemPosition());
+                mMatrixFactory = mFacList.get(mMatrixFacSpinner.getSelectedItemPosition());
+                if (mOnConfirmClickListener != null) {
                     mOnConfirmClickListener.onClick();
                 }
             }
@@ -157,13 +178,13 @@ public class MatrixSettingDialog extends Dialog {
         mMatrixCateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mMatrixCategory=mCateList.get(position);
+                mMatrixCategory = mCateList.get(position);
 //               mOnCateSpinnerItemSelectedListener.onItemSelected(parent,view,position,id);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mMatrixCategory=mCateList.get(0);
+                mMatrixCategory = mCateList.get(0);
 //                mOnCateSpinnerItemSelectedListener.onNothingSelected(parent);
             }
         });
@@ -171,68 +192,78 @@ public class MatrixSettingDialog extends Dialog {
         mMatrixFacSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mMatrixFactory=mFacList.get(position);
+                mMatrixFactory = mFacList.get(position);
 //                mOnFacSpinnerItemSelectedListener.onItemSelected(parent,view,position,id);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mMatrixCategory=mCateList.get(0);
+                mMatrixCategory = mCateList.get(0);
 //                mOnFacSpinnerItemSelectedListener.onNothingSelected(parent);
             }
         });
     }
 
     private void initData() {
-        String[] cateArray=mContext.getResources().getStringArray(R.array.matrix_category);
-        String[] facArray=mContext.getResources().getStringArray(R.array.matrix_fac);
-        mCateList= Arrays.asList(cateArray);
-        mFacList=Arrays.asList(facArray);
-        mMatrixCateSpinner.attachDataSource(mCateList);
-        mMatrixFacSpinner.attachDataSource(mFacList);
+        String[] cateArray = mContext.getResources().getStringArray(R.array.matrix_category);
+        String[] facArray = mContext.getResources().getStringArray(R.array.matrix_fac);
+        mCateList = Arrays.asList(cateArray);
+        mFacList = Arrays.asList(facArray);
+
+        ArrayAdapter mCateAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, cateArray);
+        ArrayAdapter mFacAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, facArray);
+        mMatrixCateSpinner.setAdapter(mCateAdapter);
+        mMatrixFacSpinner.setAdapter(mFacAdapter);
+
+        ArrayAdapter adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_list_item, cateArray);
+        mDropEditStream.setAdapter(adapter);
 
     }
 
     private void initView() {
-        mMatrixCateSpinner= (NiceSpinner)findViewById(R.id.spinner_matrix_category);
-        mMatrixFacSpinner= (NiceSpinner) findViewById(R.id.spinner_matrix_factory);
-        mInputQuanEtv= (EditText) findViewById(R.id.etv_input_quantity);
-        mDelayTimeEtv= (EditText) findViewById(R.id.etv_delay_time);
-        mCancelBtn= (Button) findViewById(R.id.btn_cancel);
-        mConfirmBtn= (Button) findViewById(R.id.btn_confirm);
+        mMatrixCateSpinner = (Spinner) findViewById(R.id.spinner_matrix_category);
+        mMatrixFacSpinner = (Spinner) findViewById(R.id.spinner_matrix_factory);
+        mDropEditStream = (DropEditText) findViewById(R.id.dropetv_matrix_stream);
+        mInputQuanEtv = (EditText) findViewById(R.id.etv_input_quantity);
+        mDelayTimeEtv = (EditText) findViewById(R.id.etv_delay_time);
+        mAddrEtv = (EditText) findViewById(R.id.etv_addr);
+        mCancelBtn = (Button) findViewById(R.id.btn_cancel);
+        mConfirmBtn = (Button) findViewById(R.id.btn_confirm);
     }
 
-    public void setOnCancelClickListener(onCancelClickListener onCancelClickListener){
-        this.mOnCancelClickListener=onCancelClickListener;
+    public void setOnCancelClickListener(onCancelClickListener onCancelClickListener) {
+        this.mOnCancelClickListener = onCancelClickListener;
     }
 
-    public void setOnConfirmClickListener(onConfirmClickListener onConfirmClickListener){
-        this.mOnConfirmClickListener=onConfirmClickListener;
+    public void setOnConfirmClickListener(onConfirmClickListener onConfirmClickListener) {
+        this.mOnConfirmClickListener = onConfirmClickListener;
     }
 
-    public void setOnCateSpinnerItemSelectedListener(OnCateSpinnerItemSelectedListener onCateSpinnerItemSelectedListener){
-        this.mOnCateSpinnerItemSelectedListener=onCateSpinnerItemSelectedListener;
+    public void setOnCateSpinnerItemSelectedListener(OnCateSpinnerItemSelectedListener onCateSpinnerItemSelectedListener) {
+        this.mOnCateSpinnerItemSelectedListener = onCateSpinnerItemSelectedListener;
     }
 
-    public void setOnFacSpinnerItemSelectedListener(OnFacSpinnerItemSelectedListener onFacSpinnerItemSelectedListener){
-        this.mOnFacSpinnerItemSelectedListener=onFacSpinnerItemSelectedListener;
+    public void setOnFacSpinnerItemSelectedListener(OnFacSpinnerItemSelectedListener onFacSpinnerItemSelectedListener) {
+        this.mOnFacSpinnerItemSelectedListener = onFacSpinnerItemSelectedListener;
     }
 
-    public interface onCancelClickListener{
+    public interface onCancelClickListener {
         public void onClick();
     }
 
-    public interface onConfirmClickListener{
+    public interface onConfirmClickListener {
         public void onClick();
     }
 
-    public interface OnFacSpinnerItemSelectedListener{
+    public interface OnFacSpinnerItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id);
+
         public void onNothingSelected(AdapterView<?> parent);
     }
 
-    public interface OnCateSpinnerItemSelectedListener{
+    public interface OnCateSpinnerItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id);
+
         public void onNothingSelected(AdapterView<?> parent);
     }
 }

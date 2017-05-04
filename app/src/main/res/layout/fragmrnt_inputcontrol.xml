@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.codetail.widget.RevealFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:tools="http://schemas.android.com/tools"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 tools:context="com.hc.wallcontrl.fragment.MatrixFragment">
+
+        <LinearLayout
+            android:id="@+id/lin_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@color/white"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/lin_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#232324"
+                android:orientation="vertical">
+                <!--android:layout_weight="1"-->
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/SpinnerLin">
+
+                <Button
+                    android:id="@+id/btn_set_input"
+                    style="@style/DialogButton"
+                    android:text="设置"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </FrameLayout>
+</io.codetail.widget.RevealFrameLayout>

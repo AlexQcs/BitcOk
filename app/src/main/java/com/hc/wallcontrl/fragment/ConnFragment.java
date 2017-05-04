@@ -72,7 +72,6 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
         editor.putString("IP",mIPStr);
         editor.putString("Port",mPortStr);
         editor.putBoolean("isConn",mIsConnected);
-
         editor.commit();
     }
 

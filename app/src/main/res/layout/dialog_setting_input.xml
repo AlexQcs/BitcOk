@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:text="信  号  源:"/>
+
+        <Spinner
+            android:id="@+id/spinner_input_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:entries="@array/matrix_category"
+            android:prompt="@string/spRs"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:text="矩阵输入:"/>
+
+        <Spinner
+            android:id="@+id/spinner_matrix_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:prompt="@string/spRs"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:text="矩阵切换类型:"/>
+
+        <Spinner
+            android:id="@+id/spinner_matrix_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:entries="@array/matrix_switch"
+            android:prompt="@string/spRs"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@style/DialogButton"
+            android:text="取消"/>
+
+        <Button
+            android:id="@+id/btn_confirm"
+            style="@style/DialogButton"
+            android:layout_marginLeft="10dp"
+            android:text="确定"/>
+    </LinearLayout>
+</LinearLayout>

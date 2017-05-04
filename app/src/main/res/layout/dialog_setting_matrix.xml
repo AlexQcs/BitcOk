@@ -1,56 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:gravity="center_vertical"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="vertical">
+
     <LinearLayout
         style="@style/SpinnerLin">
+
         <TextView
-            android:text="矩阵类型:"
-            style="@style/SpinnerInfoTextView"/>
-        <com.hc.wallcontrl.view.nicespinner.NiceSpinner
-            android:textSize="25sp"
-            app:textTint="@color/released"
+            style="@style/SpinnerInfoTextView"
+            android:text="矩阵类型:"/>
+
+        <Spinner
             android:id="@+id/spinner_matrix_category"
-            android:entries="@array/matrix_category"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:entries="@array/matrix_category"
+            android:prompt="@string/spRs"/>
     </LinearLayout>
+
     <LinearLayout
         style="@style/SpinnerLin">
+
         <TextView
-            android:text="矩阵厂家:"
+            style="@style/SpinnerInfoTextView"
             android:entries="@array/matrix_fac"
-            style="@style/SpinnerInfoTextView"/>
-        <com.hc.wallcontrl.view.nicespinner.NiceSpinner
-            android:textSize="25dp"
-            app:textTint="@color/released"
-            android:entries="@array/matrix_fac"
+            android:text="矩阵厂家:"/>
+
+        <Spinner
             android:id="@+id/spinner_matrix_factory"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:entries="@array/matrix_fac"
+            android:prompt="@string/spRs"/>
     </LinearLayout>
+
     <LinearLayout
         style="@style/SpinnerLin">
+
         <TextView
-            android:text="输入总数:"
-            style="@style/SpinnerInfoTextView"/>
+            style="@style/SpinnerInfoTextView"
+            android:entries="@array/matrix_fac"
+            android:text="输出通道:"/>
+
+        <com.hc.wallcontrl.view.DropEditText
+            android:id="@+id/dropetv_matrix_stream"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_height="wrap_content"
+            android:text="fdsafdsaf"
+            android:textColor="@color/released"
+            android:textSize="25dp"/>
+        <!--android:gravity="center"-->
+        <!--android:background="@null"-->
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:text="输入总数:"/>
+
         <EditText
-            android:text="0"
             android:id="@+id/etv_input_quantity"
-            style="@style/DialogEditText"/>
+            style="@style/DialogEditText"
+            android:text="0"/>
+
         <TextView
-            android:text="个"
-            style="@style/SpinnerInfoTextView"/>
+            style="@style/SpinnerInfoTextView"
+            android:text="个"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:text="设备地址:"/>
+
+        <EditText
+            android:id="@+id/etv_addr"
+            style="@style/DialogEditText"
+            android:text="0"/>
+
     </LinearLayout>
     <LinearLayout
         style="@style/SpinnerLin">
+
         <TextView
-            android:text="设备地址:"
-            style="@style/SpinnerInfoTextView"/>
+            style="@style/SpinnerInfoTextView"
+            android:text="命令延时:"/>
 
         <EditText
             android:id="@+id/etv_delay_time"
@@ -58,21 +103,24 @@
             android:text="0"/>
 
         <TextView
-            android:text="ms"
-            style="@style/SpinnerInfoTextView"/>
-    </LinearLayout>
-    <LinearLayout
-        style="@style/SpinnerLin">
-        <Button
-            android:text="取消"
-            android:id="@+id/btn_cancel"
-            style="@style/DialogButton"/>
-        <Button
-            android:text="确定"
-            android:id="@+id/btn_confirm"
-            android:layout_marginLeft="10dp"
-            style="@style/DialogButton"/>
+            style="@style/SpinnerInfoTextView"
+            android:text="ms"/>
     </LinearLayout>
 
-    
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@style/DialogButton"
+            android:text="取消"/>
+
+        <Button
+            android:id="@+id/btn_confirm"
+            style="@style/DialogButton"
+            android:layout_marginLeft="10dp"
+            android:text="确定"/>
+    </LinearLayout>
+
+
 </LinearLayout>
