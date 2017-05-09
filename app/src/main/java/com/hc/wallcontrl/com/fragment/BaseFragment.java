@@ -33,7 +33,7 @@ public abstract class BaseFragment extends BaseLogFragment implements IBaseFragm
     public static final String CONN = "Conn";
     public static final String SCREEN = "Screen";
     public static final String WALL = "Wall";
-
+    public static final String INPUT="Input";
     /**
      * Fragment Content view
      */

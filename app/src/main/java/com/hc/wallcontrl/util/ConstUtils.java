@@ -16,4 +16,11 @@ public class ConstUtils {
             +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
             +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
     public final static String MACHES_PORT="^([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-5]{2}[0-3][0-5])$";
+    public final static String SP_ROWS="rows";
+    public final static String SP_COLUMNS="clumns";
+    public final static String SP_ISCONN="isConn";
+    public final static String SP_SCREEN_MATRIX_LIST="creen_matrix_list";
+    public final static String SP_SCREEN_INPUT_LIST="screen_input_list";
+    public final static String SP_IP="IP";
+    public final static String SP_PORT="Port";
 }

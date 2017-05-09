@@ -25,7 +25,8 @@ public class MatrixSettingDialog extends Dialog {
 
     private Spinner mMatrixCateSpinner;
     private Spinner mMatrixFacSpinner;
-    private DropEditText mDropEditStream;
+    private DropEditText mStreamDropEdit;
+    private DropEditText mInputNameDropEdit;
     private EditText mInputQuanEtv;
     private EditText mDelayTimeEtv;
     private EditText mAddrEtv;
@@ -39,6 +40,8 @@ public class MatrixSettingDialog extends Dialog {
     private int mAddr;
     private String mMatrixFactory;
     private String mMatrixCategory;
+    private String mMatrixStream;
+    private String mMatrixInputName;
     private List<String> mCateList;
     private List<String> mFacList;
 
@@ -48,6 +51,14 @@ public class MatrixSettingDialog extends Dialog {
     private OnCateSpinnerItemSelectedListener mOnCateSpinnerItemSelectedListener;
     private OnFacSpinnerItemSelectedListener mOnFacSpinnerItemSelectedListener;
 
+
+    public String getMatrixStream() {
+        return mMatrixStream;
+    }
+
+    public void setMatrixStream(String matrixStream) {
+        mMatrixStream = matrixStream;
+    }
 
     public int getIntputQuan() {
         return mIntputQuan;
@@ -139,6 +150,14 @@ public class MatrixSettingDialog extends Dialog {
         mDelayTimeEtv = delayTimeEtv;
     }
 
+    public String getMatrixInputName() {
+        return mMatrixInputName;
+    }
+
+    public void setMatrixInputName(String matrixInputName) {
+        mMatrixInputName = matrixInputName;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,61 +188,41 @@ public class MatrixSettingDialog extends Dialog {
                 mAddr = Integer.parseInt(mAddrEtv.getText().toString());
                 mMatrixCategory = mCateList.get(mMatrixCateSpinner.getSelectedItemPosition());
                 mMatrixFactory = mFacList.get(mMatrixFacSpinner.getSelectedItemPosition());
+                mMatrixStream=mStreamDropEdit.getText().toString();
+                mMatrixInputName=mInputNameDropEdit.getText().toString();
                 if (mOnConfirmClickListener != null) {
                     mOnConfirmClickListener.onClick();
                 }
             }
         });
 
-        mMatrixCateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mMatrixCategory = mCateList.get(position);
-//               mOnCateSpinnerItemSelectedListener.onItemSelected(parent,view,position,id);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mMatrixCategory = mCateList.get(0);
-//                mOnCateSpinnerItemSelectedListener.onNothingSelected(parent);
-            }
-        });
-
-        mMatrixFacSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mMatrixFactory = mFacList.get(position);
-//                mOnFacSpinnerItemSelectedListener.onItemSelected(parent,view,position,id);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mMatrixCategory = mCateList.get(0);
-//                mOnFacSpinnerItemSelectedListener.onNothingSelected(parent);
-            }
-        });
     }
 
     private void initData() {
         String[] cateArray = mContext.getResources().getStringArray(R.array.matrix_category);
         String[] facArray = mContext.getResources().getStringArray(R.array.matrix_fac);
+        String[] inputNameArray=mContext.getResources().getStringArray(R.array.matrix_input);
         mCateList = Arrays.asList(cateArray);
         mFacList = Arrays.asList(facArray);
 
         ArrayAdapter mCateAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, cateArray);
         ArrayAdapter mFacAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, facArray);
+        ArrayAdapter mStreamAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_list_item, cateArray);
+        ArrayAdapter mInputNameAdapter=new ArrayAdapter<String> (mContext,R.layout.spinner_list_item,inputNameArray);
+
         mMatrixCateSpinner.setAdapter(mCateAdapter);
         mMatrixFacSpinner.setAdapter(mFacAdapter);
+        mStreamDropEdit.setAdapter(mStreamAdapter);
+        mInputNameDropEdit.setAdapter(mInputNameAdapter);
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_list_item, cateArray);
-        mDropEditStream.setAdapter(adapter);
 
     }
 
     private void initView() {
         mMatrixCateSpinner = (Spinner) findViewById(R.id.spinner_matrix_category);
         mMatrixFacSpinner = (Spinner) findViewById(R.id.spinner_matrix_factory);
-        mDropEditStream = (DropEditText) findViewById(R.id.dropetv_matrix_stream);
+        mStreamDropEdit = (DropEditText) findViewById(R.id.dropetv_matrix_stream);
+        mInputNameDropEdit= (DropEditText) findViewById(R.id.dropetv_matrix_name);
         mInputQuanEtv = (EditText) findViewById(R.id.etv_input_quantity);
         mDelayTimeEtv = (EditText) findViewById(R.id.etv_delay_time);
         mAddrEtv = (EditText) findViewById(R.id.etv_addr);

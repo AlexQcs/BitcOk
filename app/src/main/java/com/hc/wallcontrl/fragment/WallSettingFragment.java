@@ -18,9 +18,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hc.wallcontrl.R;
+import com.hc.wallcontrl.bean.ScreenInputBean;
+import com.hc.wallcontrl.bean.ScreenMatrixBean;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.util.ConstUtils;
+import com.hc.wallcontrl.util.PrefrenceUtils;
 import com.hc.wallcontrl.view.MyTable;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -37,11 +43,12 @@ public class WallSettingFragment extends BaseFragment {
     private Button mBtnSetTable;
     private LinearLayout mLinTable;
     private int mRows = 4, mColumns = 4;
-
+    private ArrayList<ScreenMatrixBean> mListScreenMatrix;
+    private ArrayList<ScreenInputBean> mListScreenInput;
     private MyTable mMyTable;
 
     private Context mContext;
-
+    
 
     private Bitmap bitmap;
 
@@ -143,10 +150,36 @@ public class WallSettingFragment extends BaseFragment {
     void getRowsColumns() {
         mRows = mSpinnerRows.getSelectedItemPosition() + 1;
         mColumns = mSpinnerColumns.getSelectedItemPosition() + 1;
+        mListScreenMatrix=new ArrayList<>();
+        mListScreenInput=new ArrayList<>();
+        for (int i = 0; i < mRows; i++) {
+            for (int j = 0; j < mColumns; j++) {
+                ScreenMatrixBean screenMatrixBean=new ScreenMatrixBean();
+                ScreenInputBean screenInputBean=new ScreenInputBean();
+                screenMatrixBean.setColumn(j+1);
+                screenMatrixBean.setRow(i+1);
+                screenInputBean.setColumn(j+1);
+                screenInputBean.setRow(i+1);
+                mListScreenMatrix.add(screenMatrixBean);
+                mListScreenInput.add(screenInputBean);
+                screenMatrixBean=null;
+                screenInputBean=null;
+            }
+        }
         mPreferences = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt("rows", mRows);
-        editor.putInt("columns", mColumns);
+        try {
+            String listMatrixString= PrefrenceUtils.SceneList2String(mListScreenMatrix);
+            editor.putString(ConstUtils.SP_SCREEN_MATRIX_LIST, listMatrixString);
+            String listInputString=PrefrenceUtils.SceneList2String(mListScreenInput);
+            editor.putString(ConstUtils.SP_SCREEN_INPUT_LIST,listInputString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        editor.putInt(ConstUtils.SP_ROWS, mRows);
+        editor.putInt(ConstUtils.SP_COLUMNS, mColumns);
+
         editor.commit();
     }
 
@@ -156,8 +189,8 @@ public class WallSettingFragment extends BaseFragment {
 
         mPreferences = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         if (mPreferences != null) {
-            mRows = mPreferences.getInt("rows", 4);
-            mColumns = mPreferences.getInt("columns", 4);
+            mRows = mPreferences.getInt(ConstUtils.SP_ROWS, 4);
+            mColumns = mPreferences.getInt(ConstUtils.SP_COLUMNS, 4);
         }
     }
 

@@ -23,6 +23,7 @@ import com.hc.wallcontrl.com.activity.AppActivity;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.fragment.ConnFragment;
 import com.hc.wallcontrl.fragment.ControlFragment;
+import com.hc.wallcontrl.fragment.InputControlFragment;
 import com.hc.wallcontrl.fragment.MatrixFragment;
 import com.hc.wallcontrl.fragment.WallSettingFragment;
 import com.hc.wallcontrl.service.SocketService;
@@ -76,19 +77,18 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     }
 
     private void createMenuList() {
-        SlideMenuItem munuItemClose = new SlideMenuItem(BaseFragment.CLOSE, R.mipmap.item_close);
-        mSlideMenuItems.add(munuItemClose);
-        SlideMenuItem munuItemMain = new SlideMenuItem(BaseFragment.MAIN, R.mipmap.item_main);
-        mSlideMenuItems.add(munuItemMain);
-        SlideMenuItem munuItemConn = new SlideMenuItem(BaseFragment.CONN, R.mipmap.item_conn);
-        mSlideMenuItems.add(munuItemConn);
-        SlideMenuItem munuItemWall = new SlideMenuItem(BaseFragment.WALL, R.mipmap.item_wall);
-        mSlideMenuItems.add(munuItemWall);
-        SlideMenuItem munuItemMatrix = new SlideMenuItem(BaseFragment.MATRIX, R.mipmap.item_matrix);
-        mSlideMenuItems.add(munuItemMatrix);
-        SlideMenuItem munuItemScreen = new SlideMenuItem(BaseFragment.SCREEN, R.mipmap.item_screen);
-        mSlideMenuItems.add(munuItemScreen);
-
+        SlideMenuItem menuItemClose = new SlideMenuItem(BaseFragment.CLOSE, R.mipmap.item_close);
+        mSlideMenuItems.add(menuItemClose);
+        SlideMenuItem menuItemMain = new SlideMenuItem(BaseFragment.MAIN, R.mipmap.item_main);
+        mSlideMenuItems.add(menuItemMain);
+        SlideMenuItem menuItemConn = new SlideMenuItem(BaseFragment.CONN, R.mipmap.item_conn);
+        mSlideMenuItems.add(menuItemConn);
+        SlideMenuItem menuItemWall = new SlideMenuItem(BaseFragment.WALL, R.mipmap.item_wall);
+        mSlideMenuItems.add(menuItemWall);
+        SlideMenuItem menuItemMatrix = new SlideMenuItem(BaseFragment.MATRIX, R.mipmap.item_matrix);
+        mSlideMenuItems.add(menuItemMatrix);
+        SlideMenuItem menuItemScreen = new SlideMenuItem(BaseFragment.SCREEN, R.mipmap.item_screen);
+        mSlideMenuItems.add(menuItemScreen);
     }
 
     @Override
@@ -181,6 +181,9 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
             case BaseFragment.MATRIX:
                 mTvToolbarText.setText("矩阵");
                 return replaceFragment(MatrixFragment.newInstance(), position);
+            case BaseFragment.SCREEN:
+                mTvToolbarText.setText("输入");
+                return replaceFragment(InputControlFragment.newInstance(),position);
             default:
                 return replaceFragment(screenShotable, position);
 //                return null;

@@ -69,9 +69,9 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
 
         mIPStr=mEditIP.getText().toString().trim();
         mPortStr=mEditPort.getText().toString().trim();
-        editor.putString("IP",mIPStr);
-        editor.putString("Port",mPortStr);
-        editor.putBoolean("isConn",mIsConnected);
+        editor.putString(ConstUtils.SP_IP,mIPStr);
+        editor.putString(ConstUtils.SP_PORT,mPortStr);
+        editor.putBoolean(ConstUtils.SP_ISCONN,mIsConnected);
         editor.commit();
     }
 
@@ -98,9 +98,9 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
     public void initData() {
         mPreferences=mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES,Context.MODE_PRIVATE);
         if (mPreferences!=null){
-            mIPStr=mPreferences.getString("IP","0.0.0.0");
-            mPortStr=mPreferences.getString("Port","0000");
-            mIsConnected=mPreferences.getBoolean("isConn",false);
+            mIPStr=mPreferences.getString(ConstUtils.SP_IP,"0.0.0.0");
+            mPortStr=mPreferences.getString(ConstUtils.SP_PORT,"0000");
+            mIsConnected=mPreferences.getBoolean(ConstUtils.SP_ISCONN,false);
         }
 
 

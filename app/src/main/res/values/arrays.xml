@@ -21,6 +21,25 @@
     </string-array>
 
 
+    <string-array name="matrix_input">
+        <item>矩阵输入1</item>
+        <item>矩阵输入2</item>
+        <item>矩阵输入3</item>
+        <item>矩阵输入4</item>
+        <item>矩阵输入5</item>
+        <item>矩阵输入6</item>
+        <item>矩阵输入7</item>
+        <item>矩阵输入8</item>
+        <item>矩阵输入9</item>
+        <item>矩阵输入10</item>
+        <item>矩阵输入11</item>
+        <item>矩阵输入12</item>
+        <item>矩阵输入13</item>
+        <item>矩阵输入14</item>
+        <item>矩阵输入15</item>
+    </string-array>
+
+
 
     
 </resources>

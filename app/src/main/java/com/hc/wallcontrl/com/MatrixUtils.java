@@ -12,6 +12,8 @@ public class MatrixUtils {
     private String matrixSwType;
     //矩阵类型
     private String matrixType;
+    //矩阵输入名称
+    private String matrixInputName;
     //矩阵总输出
     private int mxOutSum;
     //矩阵总输入

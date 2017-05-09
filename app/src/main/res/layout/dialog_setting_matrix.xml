@@ -53,7 +53,27 @@
             android:layout_width="match_parent"
             android:gravity="center_vertical|center_horizontal"
             android:layout_height="wrap_content"
-            android:text="fdsafdsaf"
+            android:text="通道1"
+            android:textColor="@color/released"
+            android:textSize="25dp"/>
+        <!--android:gravity="center"-->
+        <!--android:background="@null"-->
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/SpinnerLin">
+
+        <TextView
+            style="@style/SpinnerInfoTextView"
+            android:entries="@array/matrix_fac"
+            android:text="输入名称:"/>
+
+        <com.hc.wallcontrl.view.DropEditText
+            android:id="@+id/dropetv_matrix_name"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_height="wrap_content"
+            android:text="矩阵输入1"
             android:textColor="@color/released"
             android:textSize="25dp"/>
         <!--android:gravity="center"-->

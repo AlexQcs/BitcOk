@@ -8,11 +8,15 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 
 import com.hc.wallcontrl.R;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,17 +30,22 @@ public class InputSettingDialog extends Dialog {
     private Spinner mInputSourceSpinner;//信号源
     private Spinner mMatrixInputSpinner;
     private Spinner mMatrixSwitchSpinner;
+    private CheckBox mSingleScreenBox;
+    private CheckBox mUseMatrixBox;
 
-    private Button mCancelBtn;
-    private Button mConfirmBtn;
+    private Button mCancelBtn;//取消按钮
+    private Button mConfirmBtn;//确定按钮
 
-    private String mInputSource;
-    private String mMatrixSwitch;
-    private String mMatrixInput;
+    private String mInputSource;//信号源
+    private String mMatrixSwitch;//矩阵切换类型
+    private String mMatrixInput;//矩阵输入
+    private boolean mIsSingleScreen;//单屏模式
+    private boolean mIsUseMatrix;//使用矩阵
 
-    private List<String> mInputSourceList;
-    private List<String> mMatrixSwitchList;
-    private List<String> mmMatrixInputList;
+
+    private List<String> mInputSourceList;//信号源
+    private List<String> mMatrixSwitchList;//矩阵切换类型
+    private List<String> mMatrixInputList;//矩阵输入
 
     private onCancelClickListener mOnCancelClickListener;
     private onConfirmClickListener mOnConfirmClickListener;
@@ -44,6 +53,8 @@ public class InputSettingDialog extends Dialog {
     private OnInputSourceSpinnerItemSelectedListener mOnInputSourceSpinnerItemSelectedListener;
     private OnMatrixInputSpinnerItemSelectedListener mOnMatrixInputSpinnerItemSelectedListener;
     private OnMatrixSwitchSpinnerItemSelectedListener mMatrixSwitchSpinnerItemSelectedListener;
+
+
 
     public String getInputSource() {
         return mInputSource;
@@ -85,14 +96,30 @@ public class InputSettingDialog extends Dialog {
         mMatrixSwitchList = matrixSwitchList;
     }
 
-    public List<String> getMmMatrixInputList() {
-        return mmMatrixInputList;
+    public List<String> getMatrixInputList() {
+        return mMatrixInputList;
     }
 
-    public void setMmMatrixInputList(List<String> mmMatrixInputList) {
-        this.mmMatrixInputList = mmMatrixInputList;
+    public void setMatrixInputList(List<String> matrixInputList) {
+        mMatrixInputList = matrixInputList;
     }
 
+
+    public boolean isSingleScreen() {
+        return mIsSingleScreen;
+    }
+
+    public void setSingleScreen(boolean singleScreen) {
+        mIsSingleScreen = singleScreen;
+    }
+
+    public boolean isUseMatrix() {
+        return mIsUseMatrix;
+    }
+
+    public void setUseMatrix(boolean useMatrix) {
+        mIsUseMatrix = useMatrix;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,17 +133,73 @@ public class InputSettingDialog extends Dialog {
     }
 
     private void initEvent() {
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnCancelClickListener != null) {
+                    mOnCancelClickListener.onClick();
+                }
+            }
+        });
+        mConfirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /**String mInputSource;//信号源
+                 String mMatrixSwitch;//矩阵切换类型
+                 String mMatrixInput;//矩阵输入
+                 boolean mIsSingleScreen;//单屏模式
+                 boolean mIsUseMatrix;//使用矩阵
+                 */
+                mInputSource=mInputSourceList.get(mInputSourceSpinner.getSelectedItemPosition());
+                mMatrixSwitch=mMatrixSwitchList.get(mMatrixSwitchSpinner.getSelectedItemPosition());
+                mMatrixInput=mMatrixInputList.get(mMatrixInputSpinner.getSelectedItemPosition());
+                mIsSingleScreen=mSingleScreenBox.isChecked();
+                mIsUseMatrix=mUseMatrixBox.isChecked();
+                if (mOnConfirmClickListener!=null){
+                    mOnConfirmClickListener.onClick();
+                }
 
+            }
+        });
+        mUseMatrixBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    mMatrixInputSpinner.setVisibility(View.VISIBLE);
+                }else {
+                    mMatrixInputSpinner.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private void initData() {
 //        String[] inputSource=mContext.getResources().getStringArray(R.array.)
+        String[] inputSrcArray = mContext.getResources().getStringArray(R.array.matrix_category);
+        String[] matrixInputArray = mContext.getResources().getStringArray(R.array.matrix_input);
+        String[] matrixSwitchArray = mContext.getResources().getStringArray(R.array.matrix_switch);
+
+        mInputSourceList = Arrays.asList(inputSrcArray);
+        mMatrixInputList = Arrays.asList(matrixInputArray);
+        mMatrixSwitchList = Arrays.asList(matrixSwitchArray);
+
+        ArrayAdapter inputSrcAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, inputSrcArray);
+        ArrayAdapter matrixInputAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, matrixInputArray);
+        ArrayAdapter matrixSwitchAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, matrixSwitchArray);
+
+        mInputSourceSpinner.setAdapter(inputSrcAdapter);
+        mMatrixSwitchSpinner.setAdapter(matrixSwitchAdapter);
+        mMatrixInputSpinner.setAdapter(matrixInputAdapter);
+
+
     }
 
     private void initView() {
         mInputSourceSpinner = (Spinner) findViewById(R.id.spinner_input_source);
         mMatrixInputSpinner = (Spinner) findViewById(R.id.spinner_matrix_input);
         mMatrixSwitchSpinner = (Spinner) findViewById(R.id.spinner_matrix_switch);
+        mUseMatrixBox = (CheckBox) findViewById(R.id.checkbox_usematrix);
+        mSingleScreenBox = (CheckBox) findViewById(R.id.checkbox_singlescreen);
         mCancelBtn = (Button) findViewById(R.id.btn_cancel);
         mConfirmBtn = (Button) findViewById(R.id.btn_confirm);
     }

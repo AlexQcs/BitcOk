@@ -101,11 +101,11 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     public void initData() {
         sp = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         if (sp == null) return;
-        Rs = sp.getInt("rows", Rs);
-        Cs = sp.getInt("columns", Cs);
-        bConnected = sp.getBoolean("isConn", bConnected);
-        strIP = sp.getString("IP", strIP);
-        strPort = sp.getString("Port", "8899");
+        Rs = sp.getInt(ConstUtils.SP_ROWS, Rs);
+        Cs = sp.getInt(ConstUtils.SP_COLUMNS, Cs);
+        bConnected = sp.getBoolean(ConstUtils.SP_ISCONN, bConnected);
+        strIP = sp.getString(ConstUtils.SP_IP, strIP);
+        strPort = sp.getString(ConstUtils.SP_PORT, "8899");
         if (!strPort.equals("")) {
             Port = Integer.parseInt(strPort);
         } else {
@@ -198,8 +198,8 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         // Cs = spCsum.getSelectedItemPosition() + 1;
 
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt("rows", Rs);
-        editor.putInt("columns", Cs);
+        editor.putInt(ConstUtils.SP_ROWS, Rs);
+        editor.putInt(ConstUtils.SP_COLUMNS, Cs);
         editor.commit();
 
         return new byte[]{(byte) Irs, (byte) Ics, (byte) Ire, (byte) Ice};

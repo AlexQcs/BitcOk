@@ -73,6 +73,21 @@
                 android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content">
                 <TextView
+                    android:text="输入名称:"
+                    style="@style/InfoTextView"/>
+                <TextView
+                    android:id="@+id/tv_matirx_inputname"
+                    android:layout_marginLeft="10dp"
+                    android:text="矩阵输入1"
+                    style="@style/InfoTextView"/>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content">
+                <TextView
                     android:text="输出通道:"
                     style="@style/InfoTextView"/>
                 <TextView
@@ -126,6 +141,7 @@
                     android:text="5ms"
                     style="@style/InfoTextView"/>
             </LinearLayout>
+
         </LinearLayout>
 
 

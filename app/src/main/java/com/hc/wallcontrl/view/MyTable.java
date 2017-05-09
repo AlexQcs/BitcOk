@@ -14,7 +14,8 @@ import android.widget.LinearLayout;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.adapter.MyTableAdapter;
-import com.hc.wallcontrl.bean.ScreenBean;
+import com.hc.wallcontrl.bean.ScreenInputBean;
+import com.hc.wallcontrl.bean.ScreenMatrixBean;
 
 import java.util.ArrayList;
 
@@ -48,15 +49,15 @@ public class MyTable extends LinearLayout {
     protected OnTableClickListener clickListener;//整个分页控件被点击时的回调函数
     protected OnTableTouchListener touchListener;//分页触摸回调函数
 
-    public ArrayList<ScreenBean> getListScreenBeen() {
+    public ArrayList<ScreenMatrixBean> getListScreenBeen() {
         return mListScreenBeen;
     }
 
-    public void setListScreenBeen(ArrayList<ScreenBean> listScreenBeen) {
+    public void setListScreenBeen(ArrayList<ScreenMatrixBean> listScreenBeen) {
         mListScreenBeen = listScreenBeen;
     }
 
-    private ArrayList<ScreenBean> mListScreenBeen;
+    private ArrayList<ScreenMatrixBean> mListScreenBeen;
 
     public MyTable(Context context) {
         super(context);
@@ -124,21 +125,38 @@ public class MyTable extends LinearLayout {
     }
 
     //返回被选中的格子
-    public ArrayList<ScreenBean> getSelectItemIndex() {
-        ArrayList<ScreenBean> mList = new ArrayList<>();
+    public ArrayList<ScreenMatrixBean> getScreenMatrixSelectItemIndex() {
+        ArrayList<ScreenMatrixBean> mScreenMatrixList = new ArrayList<>();
         myGetSeltArea();
         for (int r = 0; r < TableRows; r++) {
             for (int c = 0; c < TableCols; c++) {
                 if (r >= rs - 1 && r <= re - 1 && c >= cs - 1 && c <= ce - 1) {
-                    ScreenBean screenBean=new ScreenBean();
+                    ScreenMatrixBean screenBean=new ScreenMatrixBean();
                     screenBean.setColumn(c+1);
                     screenBean.setRow(r+1);
-                    mList.add(screenBean);
+                    mScreenMatrixList.add(screenBean);
                     screenBean=null;
                 }
             }
         }
-        return mList;
+        return mScreenMatrixList;
+    }
+    
+    public ArrayList<ScreenInputBean> getScreenInputSelectItemIndex(){
+        ArrayList<ScreenInputBean> mScreenInputList = new ArrayList<>();
+        myGetSeltArea();
+        for (int r = 0; r < TableRows; r++) {
+            for (int c = 0; c < TableCols; c++) {
+                if (r >= rs - 1 && r <= re - 1 && c >= cs - 1 && c <= ce - 1) {
+                    ScreenInputBean screenBean=new ScreenInputBean();
+                    screenBean.setColumn(c+1);
+                    screenBean.setRow(r+1);
+                    mScreenInputList.add(screenBean);
+                    screenBean=null;
+                }
+            }
+        }
+        return mScreenInputList;
     }
 
     public void mySetRows(int rows) {
