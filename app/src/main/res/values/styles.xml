@@ -29,6 +29,12 @@
     <style name="SpinnerInfoTextView">
         <item name="android:textColor">@color/released</item>
         <item name="android:textSize">25sp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="MatrixInfoTextView">
+        <item name="android:textColor">@color/released</item>
+        <item name="android:textSize">25sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -44,7 +50,8 @@
 
     <style name="DialogEditText">
         <item name="android:textSize">25sp</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:minWidth">50dp</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:gravity">center</item>
@@ -75,6 +82,52 @@
         <item name="android:textColor">@color/released</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="RemoterButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/btn_style</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="GrayInfoText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="GraySpinner">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:entries">@array/ListArray</item>
+        <item name="android:prompt">@string/spRs</item>
+    </style>
+
+    <style name="GrayLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/btn_style</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:visibility">visible</item>
+    </style>
+
+    <style name="FunctionCateTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/PrimaryText</item>
+    </style>
+
+    <style name="CircleButton">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
     </style>
 
 

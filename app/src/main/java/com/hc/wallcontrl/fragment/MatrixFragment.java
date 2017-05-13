@@ -8,14 +8,13 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.bean.ScreenMatrixBean;
@@ -23,7 +22,9 @@ import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.util.ConstUtils;
 import com.hc.wallcontrl.util.LogUtil;
 import com.hc.wallcontrl.util.PrefrenceUtils;
-import com.hc.wallcontrl.view.MatrixSettingDialog;
+import com.hc.wallcontrl.util.ToastUtil;
+import com.hc.wallcontrl.util.ViewUtil;
+import com.hc.wallcontrl.view.DropEditText;
 import com.hc.wallcontrl.view.MyTable;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ import rx.functions.Func1;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MatrixFragment extends BaseFragment implements View.OnTouchListener, View.OnClickListener {
+public class MatrixFragment extends BaseFragment implements  View.OnClickListener {
 
     private Context mContext;
     private SharedPreferences sp = null;
@@ -48,15 +49,16 @@ public class MatrixFragment extends BaseFragment implements View.OnTouchListener
 
     private LinearLayout mLinPutLable;
     private Button mSetMatrixBtn;
-    private MatrixSettingDialog mMatirxSetDialog;
-    private TextView mMatrixCategoryTv;
-    private TextView mMatrixFactoryTv;
-    private TextView mMatrixInputNameTv;
-    private TextView mMatrixStreamTv;
-    private TextView mInputQuantityTv;
-    private TextView mAddrTv;
-    private TextView mDelayTimeTv;
+//    private MatrixSettingDialog mMatirxSetDialog;
 
+    private Spinner mMatrixCateSpinner;
+    private Spinner mMatrixFacSpinner;
+    private DropEditText mStreamOutDropEdit;
+    private DropEditText mInputNameDropEdit;
+    private EditText mInputQuanEtv;
+    private EditText mDelayTimeEtv;
+    private EditText mAddrEtv;
+    private LinearLayout mStreamDropLin;
 
     private MyTable mMyTable;
     private int[] SeltArea = new int[4];
@@ -112,65 +114,55 @@ public class MatrixFragment extends BaseFragment implements View.OnTouchListener
     public void initView(View inflateView, Bundle savedInstanceState) {
         mLinPutLable = (LinearLayout) inflateView.findViewById(R.id.lin_table);
         mSetMatrixBtn = (Button) inflateView.findViewById(R.id.btn_set_matrix);
-        mAddrTv = (TextView) inflateView.findViewById(R.id.tv_addr);
-        mDelayTimeTv = (TextView) inflateView.findViewById(R.id.tv_delaytime);
-        mInputQuantityTv = (TextView) inflateView.findViewById(R.id.tv_input_quantity);
-        mMatrixCategoryTv = (TextView) inflateView.findViewById(R.id.tv_matirx_category);
-        mMatrixFactoryTv = (TextView) inflateView.findViewById(R.id.tv_matirx_factory);
-        mMatrixStreamTv= (TextView) inflateView.findViewById(R.id.tv_matrix_stream);
-        mMatrixInputNameTv= (TextView) inflateView.findViewById(R.id.tv_matirx_inputname);
+        mMatrixCateSpinner = (Spinner) inflateView.findViewById(R.id.spinner_matrix_category);
+        mMatrixFacSpinner = (Spinner) inflateView.findViewById(R.id.spinner_matrix_factory);
+        mStreamOutDropEdit = (DropEditText) inflateView.findViewById(R.id.dropetv_matrix_stream);
+        mStreamDropLin=findViewById(R.id.lin_matrix_stream);
+        mInputNameDropEdit= (DropEditText)inflateView.findViewById(R.id.dropetv_matrix_name);
+        mInputQuanEtv = (EditText)inflateView.findViewById(R.id.etv_input_quantity);
+        mDelayTimeEtv = (EditText)inflateView.findViewById(R.id.etv_delay_time);
+        mAddrEtv = (EditText)inflateView.findViewById(R.id.etv_addr);
+
+        String[] cateArray = mContext.getResources().getStringArray(R.array.matrix_category);
+        String[] facArray = mContext.getResources().getStringArray(R.array.matrix_fac);
+        String[] inputNameArray=mContext.getResources().getStringArray(R.array.matrix_input);
+        String[] streamOutArray=mContext.getResources().getStringArray(R.array.matrix_stream);
+
+        ArrayAdapter mCateAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, cateArray);
+        ArrayAdapter mFacAdapter = new ArrayAdapter(mContext, R.layout.spinner_list_item, facArray);
+        ArrayAdapter mStreamOutAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_list_item, streamOutArray);
+        ArrayAdapter mInputNameAdapter=new ArrayAdapter<String> (mContext,R.layout.spinner_list_item,inputNameArray);
+
+        mMatrixCateSpinner.setAdapter(mCateAdapter);
+        mMatrixFacSpinner.setAdapter(mFacAdapter);
+        mStreamOutDropEdit.setAdapter(mStreamOutAdapter);
+        mInputNameDropEdit.setAdapter(mInputNameAdapter);
+
         mSetMatrixBtn.setOnClickListener(this);
-        setMatirxSetDialog();
         setMyTable();
     }
 
-    //矩阵设置Dialog
-    void setMatirxSetDialog() {
-
-        mMatirxSetDialog = new MatrixSettingDialog(mContext, R.style.CustomDatePickerDialog);
-        Window window = mMatirxSetDialog.getWindow();
-        window.setGravity(Gravity.BOTTOM);
-        window.setWindowAnimations(R.style.MatrixDialogStyle);
-        WindowManager.LayoutParams lp = window.getAttributes();
-        lp.x = 0;
-        lp.y = -20;
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.alpha = 9f;
-        window.setAttributes(lp);
-        mMatirxSetDialog.setOnCancelClickListener(new MatrixSettingDialog.onCancelClickListener() {
-            @Override
-            public void onClick() {
-                mMatirxSetDialog.dismiss();
-            }
-        });
-        mMatirxSetDialog.setOnConfirmClickListener(new MatrixSettingDialog.onConfirmClickListener() {
-            @Override
-            public void onClick() {
-                Log.e("mMatirxSetDialog:矩阵厂家", mMatirxSetDialog.getMatrixCategory());
-                Log.e("mMatirxSetDialog:矩阵类型", mMatirxSetDialog.getMatrixFactory());
-                Log.e("mMatirxSetDialog:输出通道", mMatirxSetDialog.getMatrixStream());
-                Log.e("mMatirxSetDialog:输入总数", mMatirxSetDialog.getIntputQuan() + "");
-                Log.e("mMatirxSetDialog:命令延时", mMatirxSetDialog.getDelayTime() + "");
-                Log.e("mMatirxSetDialog:设备地址", mMatirxSetDialog.getAddr() + "");
-                setMatrixInfo(mListScreenBeen,mListScreenApp, mMatirxSetDialog);
-                mMatirxSetDialog.dismiss();
-            }
-        });
-
-    }
 
     //设置屏幕矩阵信息
-    void setMatrixInfo(List<ScreenMatrixBean> resList, List<ScreenMatrixBean> targetList, MatrixSettingDialog dialog) {
+    void setMatrixInfo(List<ScreenMatrixBean> resList, List<ScreenMatrixBean> targetList) {
         for (ScreenMatrixBean screenBean : resList) {
             for (int i=0;i<targetList.size();i++) {
                 if (screenBean.getRow()==targetList.get(i).getRow()&&screenBean.getColumn()==targetList.get(i).getColumn()){
-                    targetList.get(i).setMatrixCategory(dialog.getMatrixCategory());
-                    targetList.get(i).setMatrixFactory(dialog.getMatrixFactory());
-                    targetList.get(i).setInputQuan(dialog.getIntputQuan());
-                    targetList.get(i).setDelaytime(dialog.getDelayTime());
-                    targetList.get(i).setAddr(dialog.getAddr());
-                    targetList.get(i).setMatrixInputName(dialog.getMatrixInputName());
-                    targetList.get(i).setMatrixStream(dialog.getMatrixStream());
+                    String category=(String) mMatrixCateSpinner.getSelectedItem();
+                    String factory=(String) mMatrixFacSpinner.getSelectedItem();
+                    int quan=Integer.parseInt(mInputQuanEtv.getText().toString());
+                    int delay=Integer.parseInt(mDelayTimeEtv.getText().toString());
+                    int addr=Integer.parseInt(mAddrEtv.getText().toString());
+                    String inputName=mInputNameDropEdit.getText().toString();
+                    String streamOut=mStreamOutDropEdit.getText().toString();
+
+                    targetList.get(i).setMatrixCategory(category);
+                    targetList.get(i).setMatrixFactory(factory);
+                    targetList.get(i).setInputQuan(quan);
+                    targetList.get(i).setDelaytime(delay);
+                    targetList.get(i).setAddr(addr);
+                    targetList.get(i).setMatrixInputName(inputName);
+                    targetList.get(i).setMatrixStream(streamOut);
                 }
             }
         }
@@ -194,15 +186,22 @@ public class MatrixFragment extends BaseFragment implements View.OnTouchListener
         mMyTable.LoadTable();
         mLinPutLable.addView(mMyTable);
 
+
         mMyTable.setTableOnTouchListener(new MyTable.OnTableTouchListener() {
             @Override
             public void onTableTouchListener(View v, MotionEvent event) {
+                if (mListScreenApp==null||mListScreenApp.size()==0){
+                    ToastUtil.showShortMessage("第一次打开应用，请先设置屏幕数量！");
+                    return;
+                }
                 SeltArea = mMyTable.myGetSeltArea();
                 if (SeltArea[0] != 0) {
                     Log.e("SelectedArea: ", String.valueOf(SeltArea[0]) + ":" + String.valueOf(SeltArea[1]) + "===" + String.valueOf(SeltArea[2]) + ":" + String.valueOf(SeltArea[3]));
                 }
                 mListScreenBeen = mMyTable.getScreenMatrixSelectItemIndex();
-                if (mListScreenBeen.size() == 1)showScreenInfo();
+                if (mListScreenBeen.size() == 1){
+                    showScreenInfo();
+                }
                 for (ScreenMatrixBean screenBean : mListScreenBeen) {
                     Log.e("坐标:::", screenBean.getRow() + "-" + screenBean.getColumn());
                 }
@@ -212,31 +211,30 @@ public class MatrixFragment extends BaseFragment implements View.OnTouchListener
     }
 
     void showScreenInfo() {
-        LogUtil.e("进到showScreenInfo方法:","外部");
+        LogUtil.e("进到showScreenInfo方法:"+"外部");
         if (mListScreenBeen.size() == 1) {
             ScreenMatrixBean screenBean = mListScreenBeen.get(0);
-            LogUtil.e("进到showScreenInfo方法:","内部true");
+            LogUtil.e("进到showScreenInfo方法:"+"内部true");
             for (int i=0;i<mListScreenApp.size();i++) {
                 if (screenBean.getRow()==mListScreenApp.get(i).getRow()&&screenBean.getColumn()==mListScreenApp.get(i).getColumn()){
-                    LogUtil.e("进到showScreenInfo方法:","相等");
-                    mAddrTv.setText(mListScreenApp.get(i).getAddr() + "");
-                    mDelayTimeTv.setText(mListScreenApp.get(i).getDelaytime() + "");
-                    mInputQuantityTv.setText(mListScreenApp.get(i).getInputQuan() + "");
-                    mMatrixCategoryTv.setText(mListScreenApp.get(i).getMatrixCategory());
-                    mMatrixFactoryTv.setText(mListScreenApp.get(i).getMatrixFactory());
-                    mMatrixInputNameTv.setText(mListScreenApp.get(i).getMatrixInputName());
-                    mMatrixStreamTv.setText(mListScreenApp.get(i).getMatrixStream());
-                    LogUtil.e("进到showScreenInfo方法:",mListScreenApp.get(i).toString());
+                    LogUtil.e("进到showScreenInfo方法:"+"相等");
+                    String addr=mListScreenApp.get(i).getAddr() + "";
+                    String delay=mListScreenApp.get(i).getDelaytime() + "";
+                    String quan=mListScreenApp.get(i).getInputQuan() + "";
+                    String inputName=mListScreenApp.get(i).getMatrixInputName()+"";
+                    String streamOut=mListScreenApp.get(i).getMatrixStream()+"";
+                    String matrixCate=mListScreenApp.get(i).getMatrixCategory()+"";
+                    String matrixFac=mListScreenApp.get(i).getMatrixFactory()+"";
+
+                    mAddrEtv.setText(addr);
+                    mDelayTimeEtv.setText(delay);
+                    mInputQuanEtv.setText(quan);
+                    ViewUtil.setSpinnerItemSelectedByValue(mMatrixCateSpinner,matrixCate);
+                    ViewUtil.setSpinnerItemSelectedByValue(mMatrixFacSpinner,matrixFac);
+                    mInputNameDropEdit.setText(inputName);
+                    mStreamOutDropEdit.setText(streamOut);
+                    LogUtil.e("进到showScreenInfo方法:"+mListScreenApp.get(i).toString());
                     return;
-                }else {
-                    LogUtil.e("进到showScreenInfo方法:","内部false");
-                    mAddrTv.setText("");
-                    mDelayTimeTv.setText("");
-                    mInputQuantityTv.setText("");
-                    mMatrixCategoryTv.setText("");
-                    mMatrixFactoryTv.setText("");
-                    mMatrixStreamTv.setText("");
-                    mMatrixInputNameTv.setText("");
                 }
             }
         }
@@ -302,16 +300,18 @@ public class MatrixFragment extends BaseFragment implements View.OnTouchListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_set_matrix:
-                if (mMatirxSetDialog != null) {
-                    mMatirxSetDialog.show();
+                if (mListScreenApp!=null){
+                    if (mListScreenBeen.size()==1){
+                        setMatrixInfo(mListScreenBeen,mListScreenApp);
+                    }else if (mListScreenBeen.size()>1){
+                        ToastUtil.showShortMessage("请先选择一个屏幕且仅能选择一个！");
+                    }
+
+                }else {
+                    ToastUtil.showShortMessage("请先到设置页面设置幕墙！");
                 }
                 break;
         }
     }
 
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
-    }
 }

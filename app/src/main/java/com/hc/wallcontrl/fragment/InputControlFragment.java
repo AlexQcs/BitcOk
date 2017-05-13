@@ -97,12 +97,16 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
     @Override
     public void initView(View inflateView, Bundle savedInstanceState) {
         mLinPutLable = (LinearLayout) inflateView.findViewById(R.id.lin_table);
+
         mSetMatrixBtn = (Button) inflateView.findViewById(R.id.btn_set_input);
         mMatrixCateTv = (TextView) inflateView.findViewById(R.id.tv_matirx_category);
         mMatrixSwitchTv = (TextView) inflateView.findViewById(R.id.tv_matirx_switch);
         mInputNameTv = (TextView) inflateView.findViewById(R.id.tv_inputname);
         mUseMatrixTv = (TextView) inflateView.findViewById(R.id.tv_usematirx);
         mSingleScreenTv = (TextView) inflateView.findViewById(R.id.tv_singlescreen);
+
+
+
         mSetMatrixBtn.setOnClickListener(this);
         setMatirxSetDialog();
         setMyTable();
@@ -147,8 +151,7 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
             for (int i = 0; i < targetList.size(); i++) {
                 if (screenInputBean.getRow() == targetList.get(i).getRow() && screenInputBean.getColumn() == targetList.get(i).getColumn()) {
                     targetList.get(i).setInputName(dialog.getMatrixInput());
-                    targetList.get(i).setInputSource(dialog.getInputSource());
-                    targetList.get(i).setSingleScreen(dialog.isSingleScreen());
+                    targetList.get(i).setSignalSource(dialog.getInputSource());
                     targetList.get(i).setSwitchCate(dialog.getMatrixSwitch());
                     targetList.get(i).setUseMatrix(dialog.isUseMatrix());
                 }
@@ -208,13 +211,13 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
     }
 
     void showScreenInfo() {
-        LogUtil.e("进到showScreenInfo方法:","外部");
+        LogUtil.e("进到showScreenInfo方法:"+"外部");
         if (mListScreenBeen.size() == 1) {
             ScreenInputBean screenBean = mListScreenBeen.get(0);
-            LogUtil.e("进到showScreenInfo方法:","内部true");
+            LogUtil.e("进到showScreenInfo方法:"+"内部true");
             for (int i=0;i<mListScreenApp.size();i++) {
                 if (screenBean.getRow()==mListScreenApp.get(i).getRow()&&screenBean.getColumn()==mListScreenApp.get(i).getColumn()){
-                    LogUtil.e("进到showScreenInfo方法:","相等");
+                    LogUtil.e("进到showScreenInfo方法:"+"相等");
                     /**
                      *  mMatrixCateTv = (TextView) inflateView.findViewById(R.id.tv_matirx_category);
                      mMatrixSwitchTv = (TextView) inflateView.findViewById(R.id.tv_matirx_switch);
@@ -222,15 +225,14 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
                      mUseMatrixTv = (TextView) inflateView.findViewById(R.id.tv_usematirx);
                      mSingleScreenTv = (TextView) inflateView.findViewById(R.id.tv_singlescreen);
                      */
-                    mMatrixCateTv.setText(mListScreenApp.get(i).getInputSource() + "");
+                    mMatrixCateTv.setText(mListScreenApp.get(i).getSignalSource() + "");
                     mMatrixSwitchTv.setText(mListScreenApp.get(i).getSwitchCate() + "");
                     mInputNameTv.setText(mListScreenApp.get(i).getInputName() + "");
                     mUseMatrixTv.setText(mListScreenApp.get(i).isUseMatrix()+"");
-                    mSingleScreenTv.setText(mListScreenApp.get(i).isSingleScreen()+"");
-                    LogUtil.e("进到showScreenInfo方法:",mListScreenApp.get(i).toString());
+                    LogUtil.e("进到showScreenInfo方法:"+mListScreenApp.get(i).toString());
                     return;
                 }else {
-                    LogUtil.e("进到showScreenInfo方法:","内部false");
+                    LogUtil.e("进到showScreenInfo方法:"+"内部false");
                     mMatrixCateTv.setText("");
                     mMatrixSwitchTv.setText("");
                     mInputNameTv.setText("");

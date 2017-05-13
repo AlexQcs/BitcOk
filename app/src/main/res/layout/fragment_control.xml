@@ -10,7 +10,6 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/activity_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
@@ -19,7 +18,7 @@
             >
 
             <LinearLayout
-                android:id="@+id/llPutLables"
+                android:id="@+id/lin_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#232324"
@@ -50,11 +49,8 @@
 
                         <TextView
                             android:id="@+id/textView2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="电源开关"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/PrimaryText"/>
+                            style="@style/FunctionCateTextView"
+                            android:text="电源开关"/>
 
                         <LinearLayout
                             android:layout_width="fill_parent"
@@ -82,6 +78,15 @@
                         </LinearLayout>
                     </LinearLayout>
 
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -90,18 +95,15 @@
 
                         <TextView
                             android:id="@+id/textView3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="信号控制"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/PrimaryText"/>
+                            style="@style/FunctionCateTextView"
+                            android:text="信号控制"/>
 
                         <Switch
-                            android:id="@+id/swSFWall"
+                            android:id="@+id/switch_singlescreen"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
-                            android:autoText="false"
+                            android:maxLines="1"
                             android:text="    单屏"
                             android:textColor="@color/PrimaryText"/>
 
@@ -115,33 +117,23 @@
 
                                 <Button
                                     android:id="@+id/btnAV"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="0"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
-                                    android:text="AV"
-                                    android:textColor="#ffffff"/>
+                                    android:text="AV"/>
 
                                 <Button
                                     android:id="@+id/btnVGA"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="1"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
                                     android:text="VGA"
-                                    android:textColor="#ffffff"/>
+                                    />
 
                                 <Button
                                     android:id="@+id/btnDVI"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="2"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
                                     android:text="DVI"
-                                    android:textColor="#ffffff"/>
+                                    />
                             </TableRow>
 
                             <TableRow
@@ -150,36 +142,43 @@
 
                                 <Button
                                     android:id="@+id/btnHDMI"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_column="0"
+                                    style="@style/RemoterButton"
                                     android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
                                     android:text="HDMI"
-                                    android:textColor="#ffffff"/>
+                                    />
 
                                 <Button
                                     android:id="@+id/btnAV2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="1"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
-                                    android:text="AV2"
-                                    android:textColor="#ffffff"/>
+                                    android:text="AV2"/>
 
                                 <Button
                                     android:id="@+id/btnDP"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="2"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
-                                    android:text="DP"
-                                    android:textColor="#ffffff"/>
+                                    android:text="DP"/>
                             </TableRow>
                         </TableLayout>
 
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:text="矩阵设置"
+                            style="@style/FunctionCateTextView"/>
+
+                        <include layout="@layout/layout_input_setting"/>
+                        <include layout="@layout/layout_control"></include>
                     </LinearLayout>
 
                     <LinearLayout
@@ -191,11 +190,8 @@
 
                         <TextView
                             android:id="@+id/textView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:text="模式调用"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/PrimaryText"/>
+                            style="@style/FunctionCateTextView"/>
 
                         <TableLayout
                             android:layout_width="fill_parent"
@@ -207,13 +203,9 @@
 
                                 <Button
                                     android:id="@+id/btnPlan1"
-                                    android:layout_width="1dp"
-                                    android:layout_height="wrap_content"
+                                    style="@style/RemoterButton"
                                     android:layout_column="0"
-                                    android:layout_weight="1"
-                                    android:background="@drawable/btn_style"
-                                    android:text="1"
-                                    android:textColor="#ffffff"/>
+                                    android:text="1"/>
 
                                 <Button
                                     android:id="@+id/btnPlan2"
@@ -313,6 +305,7 @@
                         </TableLayout>
 
                     </LinearLayout>
+
 
                 </LinearLayout>
             </ScrollView>

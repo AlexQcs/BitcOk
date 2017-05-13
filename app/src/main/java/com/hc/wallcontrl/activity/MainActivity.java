@@ -48,6 +48,8 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     private LinearLayout mLinearLayout;
     private TextView mTvToolbarText;
 
+    private int index_menuiterm;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +108,13 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.mipmap.more);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -125,6 +134,7 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
                 super.onDrawerSlide(drawerView, slideOffset);
                 if (slideOffset > 0.6 && mLinearLayout.getChildCount() == 0) {
                     mViewAnimator.showMenuContent();
+                    mLinearLayout.getChildAt(index_menuiterm).setSelected(true);
                 }
             }
 
@@ -153,6 +163,7 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -164,24 +175,31 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
 //        }
     }
 
+
     @Override
     public ScreenShotable onSwitch(Resourceble slideMenuItem, ScreenShotable screenShotable, int position) {
+        mLinearLayout.getChildAt(index_menuiterm).setSelected(false);
         switch (slideMenuItem.getName()) {
             case BaseFragment.CLOSE:
                 return screenShotable;
-            case BaseFragment.CONN:
-                mTvToolbarText.setText("连接");
-                return replaceFragment(ConnFragment.newInstance(), position);
             case BaseFragment.MAIN:
+                index_menuiterm =1;
                 mTvToolbarText.setText("控制");
                 return replaceFragment(ControlFragment.newInstance(), position);
+            case BaseFragment.CONN:
+                index_menuiterm=2;
+                mTvToolbarText.setText("连接");
+                return replaceFragment(ConnFragment.newInstance(), position);
             case BaseFragment.WALL:
+                index_menuiterm=3;
                 mTvToolbarText.setText("幕墙设置");
                 return replaceFragment(WallSettingFragment.newInstance(), position);
             case BaseFragment.MATRIX:
+                index_menuiterm=4;
                 mTvToolbarText.setText("矩阵");
                 return replaceFragment(MatrixFragment.newInstance(), position);
             case BaseFragment.SCREEN:
+                index_menuiterm=5;
                 mTvToolbarText.setText("输入");
                 return replaceFragment(InputControlFragment.newInstance(),position);
             default:
@@ -204,10 +222,12 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     @Override
     public void addViewToContainer(View view) {
         mLinearLayout.addView(view);
+
     }
 
 
     private ScreenShotable replaceFragment(ScreenShotable screenShotable, int topOption) {
+        mLinearLayout.getChildAt(index_menuiterm).setSelected(true);
         View view = findViewById(R.id.content_frame);
         int finalRadius = Math.max(view.getWidth(), view.getHeight());
         Animator animator = ViewAnimationUtils.createCircularReveal(view, 0, topOption, 0, finalRadius);
@@ -219,4 +239,6 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, (Fragment) screenShotable).commit();
         return screenShotable;
     }
+
+    
 }

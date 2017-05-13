@@ -64,4 +64,6 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.9'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.badoo.mobile:android-weak-handler:1.1'
+    compile 'com.orhanobut:logger:1.8'
+    compile 'com.github.markushi:circlebutton:1.1'
 }

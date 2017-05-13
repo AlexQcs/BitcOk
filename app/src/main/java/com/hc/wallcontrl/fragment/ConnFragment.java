@@ -15,7 +15,6 @@ import android.widget.EditText;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
-import com.hc.wallcontrl.service.SocketService;
 import com.hc.wallcontrl.util.ConstUtils;
 import com.hc.wallcontrl.util.LogUtil;
 import com.hc.wallcontrl.util.StringUtils;
@@ -61,18 +60,12 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
         mContext = getActivity();
     }
 
+
+
     @Override
     public void onPause() {
         super.onPause();
-        mPreferences=mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPreferences.edit();
 
-        mIPStr=mEditIP.getText().toString().trim();
-        mPortStr=mEditPort.getText().toString().trim();
-        editor.putString(ConstUtils.SP_IP,mIPStr);
-        editor.putString(ConstUtils.SP_PORT,mPortStr);
-        editor.putBoolean(ConstUtils.SP_ISCONN,mIsConnected);
-        editor.commit();
     }
 
     @Override
@@ -86,8 +79,6 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
         mSwitchIsConn.setAnimationDuration(500);
 
         mSwitchIsConn.setOnCheckedChangeListener(this);
-        mSwitchIsConn.setOnCheckedChangeListener(this);
-
 
         mEditIP.setText(mIPStr);
         mEditPort.setText(mPortStr);
@@ -147,32 +138,46 @@ public class ConnFragment extends BaseFragment implements CompoundButton.OnCheck
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked){
+            mIsConnected=true;
             mIPStr=mEditIP.getText().toString().trim();
             mPortStr=mEditPort.getText().toString().trim();
             if (!StringUtils.checkIp(mIPStr)){
                 ToastUtil.showShortMessage("请输出正确的ip地址");
-                LogUtil.e("onCheckedChanged","请输出正确的ip地址");
+                LogUtil.e("onCheckedChanged"+"请输出正确的ip地址");
                 mSwitchIsConn.setChecked(false);
+                mIsConnected=false;
             }
             if (!StringUtils.checkPort(mPortStr)){
                 ToastUtil.showShortMessage("请输入正确的端口");
-                LogUtil.e("onCheckedChanged","请输入正确的端口");
+                LogUtil.e("onCheckedChanged"+"请输入正确的端口");
                 mSwitchIsConn.setChecked(false);
+                mIsConnected=false;
             }
-            mIsConnected=mSwitchIsConn.isChecked();
+
             if (mIsConnected){
                 Log.e("是否成功开启",mIsConnected+"");
                 Intent intent=new Intent();
                 intent.setAction(ConstUtils.ACTION_CONN);
-                intent.putExtra("ip",mIPStr);
-                intent.putExtra("port",Integer.parseInt(mPortStr));
+                intent.putExtra(ConstUtils.BROADCAST_IP,mIPStr);
+                intent.putExtra(ConstUtils.BROADCAST_PORT,Integer.parseInt(mPortStr));
+                intent.putExtra(ConstUtils.BROADCAST_ISCONN,mIsConnected);
                 mContext.sendBroadcast(intent);
             }
 
         }else {
-            Intent intent=new Intent(mContext, SocketService.class);
-            intent.setAction(ConstUtils.ACTION_CLOSE);
-            mContext.sendBroadcast(intent);
+            mIsConnected=false;
+            Intent intent1=new Intent();
+            intent1.setAction(ConstUtils.ACTION_CLOSE);
+            mContext.sendBroadcast(intent1);
         }
+        mPreferences=mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPreferences.edit();
+        mIsConnected=mSwitchIsConn.isChecked();
+        mIPStr=mEditIP.getText().toString().trim();
+        mPortStr=mEditPort.getText().toString().trim();
+        editor.putString(ConstUtils.SP_IP,mIPStr);
+        editor.putString(ConstUtils.SP_PORT,mPortStr);
+        editor.putBoolean(ConstUtils.SP_ISCONN,mIsConnected);
+        editor.commit();
     }
 }

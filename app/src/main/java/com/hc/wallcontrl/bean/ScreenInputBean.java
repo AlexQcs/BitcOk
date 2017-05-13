@@ -9,11 +9,10 @@ import java.io.Serializable;
 public class ScreenInputBean implements Serializable {
     private int column;//列
     private int row;//排
-    private String inputSource;
-    private String inputName;
-    private String switchCate;
-    private boolean isUseMatrix;
-    private boolean isSingleScreen;
+    private String signalSource;//信号源
+    private String inputName;//矩阵输入
+    private String switchCate;//切换类型
+    private boolean isUseMatrix;//是否使用矩阵
 
     public int getColumn() {
         return column;
@@ -31,12 +30,12 @@ public class ScreenInputBean implements Serializable {
         this.row = row;
     }
 
-    public String getInputSource() {
-        return inputSource;
+    public String getSignalSource() {
+        return signalSource;
     }
 
-    public void setInputSource(String inputSource) {
-        this.inputSource = inputSource;
+    public void setSignalSource(String signalSource) {
+        this.signalSource = signalSource;
     }
 
     public String getInputName() {
@@ -63,24 +62,16 @@ public class ScreenInputBean implements Serializable {
         isUseMatrix = useMatrix;
     }
 
-    public boolean isSingleScreen() {
-        return isSingleScreen;
-    }
-
-    public void setSingleScreen(boolean singleScreen) {
-        isSingleScreen = singleScreen;
-    }
 
     @Override
     public String toString() {
         return "ScreenInputBean{" +
                 "column=" + column +
                 ", row=" + row +
-                ", inputSource='" + inputSource + '\'' +
+                ", inputSource='" + signalSource + '\'' +
                 ", inputName='" + inputName + '\'' +
                 ", switchCate='" + switchCate + '\'' +
                 ", isUseMatrix=" + isUseMatrix +
-                ", isSingleScreen=" + isSingleScreen +
                 '}';
     }
 }

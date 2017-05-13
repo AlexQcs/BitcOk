@@ -20,10 +20,10 @@ public class ClsCmds {
     public static final byte USB = 0x00;
     public static final byte DP = 0x13;
 
-    public static final byte RecallPlan = (byte)0x83;
+    public static final byte RecallPlan = (byte) 0x83;
 
-    public static final byte Head =(byte) 0xf5;
-    public static final byte ModeW =(byte)0xb1;
+    public static final byte Head = (byte) 0xf5;
+    public static final byte ModeW = (byte) 0xb1;
 
     public static final byte IrMode = 0x20;
     public static final byte IrMute = 0x00;
@@ -55,6 +55,6 @@ public class ClsCmds {
     public static final byte IrTurn = 0x1a;
     public static final byte IrID = 0x1b;
     public static final byte IrPos = 0x1c;
-    public static final byte IrColor =0x1d;
+    public static final byte IrColor = 0x1d;
 
 }

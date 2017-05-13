@@ -2,6 +2,7 @@
 <resources>
     
     <string-array name="matrix_category">
+        <item>未定义</item>
         <item>HDMI</item>
         <item>VGA</item>
         <item>DVI</item>
@@ -9,6 +10,7 @@
     </string-array>
     
     <string-array name="matrix_fac">
+        <item>未定义</item>
         <item>GTC001</item>
         <item>GTC002</item>
         <item>HDMI0808</item>
@@ -22,6 +24,7 @@
 
 
     <string-array name="matrix_input">
+        <item>未定义</item>
         <item>矩阵输入1</item>
         <item>矩阵输入2</item>
         <item>矩阵输入3</item>
@@ -39,6 +42,24 @@
         <item>矩阵输入15</item>
     </string-array>
 
+    <string-array name="matrix_stream">
+        <item>未定义</item>
+        <item>输出通道1</item>
+        <item>输出通道2</item>
+        <item>输出通道3</item>
+        <item>输出通道4</item>
+        <item>输出通道5</item>
+        <item>输出通道6</item>
+        <item>输出通道7</item>
+        <item>输出通道8</item>
+        <item>输出通道9</item>
+        <item>输出通道10</item>
+        <item>输出通道11</item>
+        <item>输出通道12</item>
+        <item>输出通道13</item>
+        <item>输出通道14</item>
+        <item>输出通道15</item>
+    </string-array>
 
 
     

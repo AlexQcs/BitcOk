@@ -128,13 +128,13 @@ public class WallSettingFragment extends BaseFragment {
         mBtnSetTable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getRowsColumns();
                 setLinTable();
             }
         });
     }
 
     void setLinTable() {
-        getRowsColumns();
         mLinTable.removeAllViews();
         mMyTable = new MyTable(mContext, mLinTable.getWidth(), mLinTable.getHeight());
         Log.e("TableHeight:", mLinTable.getHeight() + "");

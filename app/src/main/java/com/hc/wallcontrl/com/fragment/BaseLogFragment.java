@@ -32,26 +32,26 @@ public abstract class BaseLogFragment extends android.support.v4.app.DialogFragm
     }
 
     final protected void d(String msg) {
-        LogUtil.d(tag, msg);
+        LogUtil.d(msg);
     }
 
     final protected void c(String msg) {
-        LogUtil.c(tag, msg);
+        LogUtil.c(msg);
     }
 
     final protected void e(String msg) {
-        LogUtil.e(tag, msg);
+        LogUtil.e( msg);
     }
 
     final protected void i(String msg) {
-        LogUtil.i(tag, msg);
+        LogUtil.i(msg);
     }
 
     final protected void v(String msg) {
-        LogUtil.v(tag, msg);
+        LogUtil.v( msg);
     }
 
     final protected void w(String msg) {
-        LogUtil.w(tag, msg);
+        LogUtil.w(msg);
     }
 }

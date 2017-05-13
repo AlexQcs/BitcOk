@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <Switch
+        android:id="@+id/switch_usematrix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用矩阵:"
+        android:textColor="@color/PrimaryText"
+        />
+
+    <LinearLayout
+        style="@style/GrayLinearLayout">
+
+
+        <TextView
+            style="@style/GrayInfoText"
+            android:text="\t信号源:"/>
+
+        <Spinner
+            android:id="@+id/spinner_input_source"
+            style="@style/GraySpinner"
+            android:entries="@array/matrix_category"
+            android:textSize="25sp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/lin_matrix_input"
+        style="@style/GrayLinearLayout">
+
+        <TextView
+            style="@style/GrayInfoText"
+            android:text="矩阵输入:"/>
+
+        <Spinner
+            android:id="@+id/spinner_matrix_input"
+            style="@style/GraySpinner"
+            android:entries="@array/matrix_input"
+            android:textSize="25sp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/lin_matrix_switch"
+        style="@style/GrayLinearLayout">
+
+        <TextView
+            style="@style/GrayInfoText"
+            android:text="矩阵切换类型:"/>
+
+        <Spinner
+            android:id="@+id/spinner_matrix_switch"
+            style="@style/GraySpinner"
+            android:entries="@array/matrix_switch"
+            android:textSize="25sp"/>
+    </LinearLayout>
+    <Button
+        android:text="设置"
+        android:id="@+id/btn_set_matrixinput"
+        android:background="@drawable/btn_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!--<TextView-->
+    <!--style="@style/GrayInfoText"-->
+    <!--android:layout_weight="1"-->
+    <!--android:text="使用矩阵:"/>-->
+
+
+</LinearLayout>

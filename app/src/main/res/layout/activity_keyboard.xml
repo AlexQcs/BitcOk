@@ -6,15 +6,15 @@
     android:id="@+id/activity_keyboard">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4">
+            android:layout_weight="4"
+            android:orientation="vertical">
 
             <TableLayout
                 android:layout_width="fill_parent"
@@ -36,36 +36,36 @@
                         android:textColor="@color/white"/>
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="New Button"
                         android:id="@+id/button5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="1"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white"
-                        android:visibility="invisible" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
                         android:text="New Button"
-                        android:id="@+id/button6"
-                        android:layout_column="2"
-                        android:layout_weight="1"
-                        android:background="@drawable/btn_style"
                         android:textColor="@color/white"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"/>
 
                     <Button
+                        android:id="@+id/button6"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="off"
+                        android:layout_column="2"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_style"
+                        android:text="New Button"
+                        android:textColor="@color/white"
+                        android:visibility="invisible"/>
+
+                    <Button
                         android:id="@+id/button7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="3"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="off"
+                        android:textColor="@color/white"/>
                 </TableRow>
 
                 <TableRow
@@ -74,44 +74,44 @@
                     android:layout_weight="1">
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="1"
                         android:id="@+id/button2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="0"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="1"
+                        android:textColor="@color/white"/>
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="2"
                         android:id="@+id/button8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="1"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="2"
+                        android:textColor="@color/white"/>
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="3"
                         android:id="@+id/button11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="2"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="3"
+                        android:textColor="@color/white"/>
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="4"
                         android:id="@+id/button14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="3"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="4"
+                        android:textColor="@color/white"/>
                 </TableRow>
 
                 <TableRow
@@ -120,44 +120,44 @@
                     android:layout_weight="1">
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:text="5"
                         android:id="@+id/button3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_column="0"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="5"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button9"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="6"
-                        android:id="@+id/button9"
                         android:layout_column="1"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="6"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button12"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="7"
-                        android:id="@+id/button12"
                         android:layout_column="2"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="7"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button15"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="8"
-                        android:id="@+id/button15"
                         android:layout_column="3"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="8"
+                        android:textColor="@color/white"/>
                 </TableRow>
 
                 <TableRow
@@ -166,208 +166,208 @@
                     android:layout_weight="1">
 
                     <Button
+                        android:id="@+id/button4"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="s-wall"
-                        android:id="@+id/button4"
                         android:layout_column="0"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="s-wall"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button10"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="9"
-                        android:id="@+id/button10"
                         android:layout_column="1"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="9"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button13"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="0"
-                        android:id="@+id/button13"
                         android:layout_column="2"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="0"
+                        android:textColor="@color/white"/>
 
                     <Button
+                        android:id="@+id/button16"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:text="f-wall"
-                        android:id="@+id/button16"
                         android:layout_column="3"
                         android:layout_weight="1"
                         android:background="@drawable/btn_style"
-                        android:textColor="@color/white" />
+                        android:text="f-wall"
+                        android:textColor="@color/white"/>
                 </TableRow>
             </TableLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="5">
+            android:layout_weight="5"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/relativeLayout2"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent" >
+                android:layout_height="fill_parent">
 
                 <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="68dp"
-                    android:layout_height="wrap_content"
-                    android:text="Sour."
                     android:id="@+id/button17"
-                    android:layout_alignParentTop="true"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="68dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="Sour."
+                    android:textColor="@color/white"/>
 
                 <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="68dp"
-                    android:layout_height="wrap_content"
-                    android:text="ID"
                     android:id="@+id/button18"
-                    android:layout_alignParentRight="true"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="68dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/button17"
+                    android:layout_alignParentRight="true"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="ID"
+                    android:textColor="@color/white"/>
 
                 <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="68dp"
-                    android:layout_height="wrap_content"
-                    android:text="UP"
                     android:id="@+id/button19"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/button17"
-                    android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
-
-                <Button
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="68dp"
                     android:layout_height="wrap_content"
-                    android:text="ENTER"
+                    android:layout_below="@+id/button17"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/btn_style"
+                    android:text="UP"
+                    android:textColor="@color/white"/>
+
+                <Button
                     android:id="@+id/button20"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="68dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/button19"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="ENTER"
+                    android:textColor="@color/white"/>
 
                 <Button
+                    android:id="@+id/button21"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="68dp"
                     android:layout_height="wrap_content"
-                    android:text="LEFT"
-                    android:id="@+id/button21"
                     android:layout_below="@+id/button19"
                     android:layout_toLeftOf="@+id/button20"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="LEFT"
+                    android:textColor="@color/white"/>
 
                 <Button
+                    android:id="@+id/button22"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="68dp"
                     android:layout_height="wrap_content"
-                    android:text="RIGHT"
-                    android:id="@+id/button22"
                     android:layout_below="@+id/button19"
                     android:layout_toRightOf="@+id/button20"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="RIGHT"
+                    android:textColor="@color/white"/>
 
                 <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="68dp"
-                    android:layout_height="wrap_content"
-                    android:text="DOWN"
                     android:id="@+id/button23"
-                    android:layout_centerHorizontal="true"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="68dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/button20"
+                    android:layout_centerHorizontal="true"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="DOWN"
+                    android:textColor="@color/white"/>
 
                 <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="68dp"
-                    android:layout_height="wrap_content"
-                    android:text="MENU"
                     android:id="@+id/button24"
-                    android:layout_below="@+id/button23"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="68dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/button23"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="MENU"
+                    android:textColor="@color/white"/>
 
                 <Button
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="68dp"
                     android:layout_height="wrap_content"
-                    android:text="EXIT"
-                    android:layout_below="@+id/button23"
                     android:layout_alignParentRight="true"
+                    android:layout_below="@+id/button23"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="EXIT"
+                    android:textColor="@color/white"/>
             </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
                 <Button
+                    android:id="@+id/button25"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="play"
-                    android:id="@+id/button25"
                     android:layout_column="0"
                     android:layout_weight="1"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="play"
+                    android:textColor="@color/white"/>
 
                 <Button
+                    android:id="@+id/button26"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="pause"
-                    android:id="@+id/button26"
                     android:layout_column="1"
                     android:layout_weight="1"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="pause"
+                    android:textColor="@color/white"/>
 
                 <Button
+                    android:id="@+id/button27"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="stop"
-                    android:id="@+id/button27"
                     android:layout_column="2"
                     android:layout_weight="1"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="stop"
+                    android:textColor="@color/white"/>
 
                 <Button
+                    android:id="@+id/button28"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="info."
-                    android:id="@+id/button28"
                     android:layout_column="3"
                     android:layout_weight="1"
                     android:background="@drawable/btn_style"
-                    android:textColor="@color/white" />
+                    android:text="info."
+                    android:textColor="@color/white"/>
 
             </TableRow>
         </LinearLayout>

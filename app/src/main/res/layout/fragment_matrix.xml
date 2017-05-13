@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.codetail.widget.RevealFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                  xmlns:tools="http://schemas.android.com/tools"
@@ -19,6 +19,7 @@
             android:background="@color/white"
             android:orientation="vertical"
             >
+
             <LinearLayout
                 android:id="@+id/lin_table"
                 android:layout_width="match_parent"
@@ -27,121 +28,16 @@
                 android:orientation="vertical">
                 <!--android:layout_weight="1"-->
 
-
-            </LinearLayout>
-            <LinearLayout
-                style="@style/SpinnerLin">
-                <Button
-                    android:text="设置"
-                    android:id="@+id/btn_set_matrix"
-                    style="@style/DialogButton"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="矩阵类型:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_matirx_category"
-                    android:layout_marginLeft="10dp"
-                    android:text="hdmi"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="矩阵厂家:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_matirx_factory"
-                    android:layout_marginLeft="10dp"
-                    android:text="gtc001"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="输入名称:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_matirx_inputname"
-                    android:layout_marginLeft="10dp"
-                    android:text="矩阵输入1"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="输出通道:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_matrix_stream"
-                    android:layout_marginLeft="10dp"
-                    android:text="1"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="输入总数:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_input_quantity"
-                    android:layout_marginLeft="10dp"
-                    android:text="5"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="设备地址:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_addr"
-                    android:layout_marginLeft="10dp"
-                    android:text="5"
-                    style="@style/InfoTextView"/>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="命令延时:"
-                    style="@style/InfoTextView"/>
-                <TextView
-                    android:id="@+id/tv_delaytime"
-                    android:layout_marginLeft="10dp"
-                    android:text="5ms"
-                    style="@style/InfoTextView"/>
             </LinearLayout>
 
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                >
+            <include layout="@layout/layout_matrix_setting"/>
+
+            </ScrollView>
         </LinearLayout>
 
 
