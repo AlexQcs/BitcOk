@@ -6,17 +6,22 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.com.activity.AppActivity;
@@ -27,6 +32,7 @@ import com.hc.wallcontrl.fragment.InputControlFragment;
 import com.hc.wallcontrl.fragment.MatrixFragment;
 import com.hc.wallcontrl.fragment.WallSettingFragment;
 import com.hc.wallcontrl.service.SocketService;
+import com.hc.wallcontrl.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +46,7 @@ import yalantis.com.sidemenu.util.ViewAnimator;
 
 public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimatorListener {
 
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private List<SlideMenuItem> mSlideMenuItems = new ArrayList<>();
@@ -48,14 +55,21 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     private LinearLayout mLinearLayout;
     private TextView mTvToolbarText;
 
-    private int index_menuiterm;
+    private int mPosition = 0;
+
+    private int index_menuiterm = 1;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
         initData();
+        initEvent();
         setActionBar();
+    }
+
+    private void initEvent() {
 
     }
 
@@ -73,7 +87,7 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
 
     void initData() {
         createMenuList();
-        Intent intent=new Intent();
+        Intent intent = new Intent();
         intent.setClass(MainActivity.this, SocketService.class);
         startService(intent);
     }
@@ -81,17 +95,59 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     private void createMenuList() {
         SlideMenuItem menuItemClose = new SlideMenuItem(BaseFragment.CLOSE, R.mipmap.item_close);
         mSlideMenuItems.add(menuItemClose);
+        //主页
         SlideMenuItem menuItemMain = new SlideMenuItem(BaseFragment.MAIN, R.mipmap.item_main);
         mSlideMenuItems.add(menuItemMain);
-        SlideMenuItem menuItemConn = new SlideMenuItem(BaseFragment.CONN, R.mipmap.item_conn);
-        mSlideMenuItems.add(menuItemConn);
-        SlideMenuItem menuItemWall = new SlideMenuItem(BaseFragment.WALL, R.mipmap.item_wall);
+        //遥控器
+        SlideMenuItem menuItemWall = new SlideMenuItem(BaseFragment.SCREEN, R.mipmap.item_contoller);
         mSlideMenuItems.add(menuItemWall);
+        //矩阵设置
         SlideMenuItem menuItemMatrix = new SlideMenuItem(BaseFragment.MATRIX, R.mipmap.item_matrix);
         mSlideMenuItems.add(menuItemMatrix);
-        SlideMenuItem menuItemScreen = new SlideMenuItem(BaseFragment.SCREEN, R.mipmap.item_screen);
+        //屏幕设置
+        SlideMenuItem menuItemScreen = new SlideMenuItem(BaseFragment.WALL, R.mipmap.item_screen);
         mSlideMenuItems.add(menuItemScreen);
+        //连接
+        SlideMenuItem menuItemConn = new SlideMenuItem(BaseFragment.CONN, R.mipmap.item_conn);
+        mSlideMenuItems.add(menuItemConn);
     }
+
+
+    private Handler mToastHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x11:
+                    String ip = msg.getData().getString("ip");
+                    ToastUtil.showShortMessage(ip);
+                    break;
+            }
+        }
+    };
+
+    //连接操作
+//    private void SetConnect() {
+//        if (!mPortString.equals("")) Port = Integer.parseInt(mPortString);
+////        byte[] Buf = new byte[]{1, 9, 8, 7, 0, 3, 2, 1};
+//
+////        mThread = new Thread(mRunnable);
+////        mThread.start();
+//        Intent intent = new Intent();
+//        intent.setAction(ConstUtils.ACTION_CONN);
+//        intent.putExtra(ConstUtils.BROADCAST_IP, mIPString);
+//        intent.putExtra(ConstUtils.BROADCAST_ISCONN, bConnected);
+//        int socketPort = Integer.parseInt(mPortString);
+//        intent.putExtra(ConstUtils.BROADCAST_PORT, socketPort);
+//        this.sendBroadcast(intent);
+//
+//        String result = mIPString + ":" + mPortString;
+//        Message msg = new Message();
+//        msg.what = 0x11;
+//        Bundle bundle = new Bundle();
+//        bundle.putString("ip", result);
+//        msg.setData(bundle);
+//        mToastHandler.sendMessage(msg);
+//    }
 
     @Override
     protected BaseFragment getFirstFragment() {
@@ -179,29 +235,30 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
     @Override
     public ScreenShotable onSwitch(Resourceble slideMenuItem, ScreenShotable screenShotable, int position) {
         mLinearLayout.getChildAt(index_menuiterm).setSelected(false);
+        mPosition = position;
         switch (slideMenuItem.getName()) {
             case BaseFragment.CLOSE:
                 return screenShotable;
             case BaseFragment.MAIN:
-                index_menuiterm =1;
+                index_menuiterm = 1;
                 mTvToolbarText.setText("控制");
                 return replaceFragment(ControlFragment.newInstance(), position);
-            case BaseFragment.CONN:
-                index_menuiterm=2;
-                mTvToolbarText.setText("连接");
-                return replaceFragment(ConnFragment.newInstance(), position);
+            case BaseFragment.SCREEN:
+                index_menuiterm = 2;
+                mTvToolbarText.setText("虚拟按键");
+                return replaceFragment(InputControlFragment.newInstance(), position);
+            case BaseFragment.MATRIX:
+                index_menuiterm = 3;
+                mTvToolbarText.setText("矩阵设置");
+                return replaceFragment(MatrixFragment.newInstance(), position);
             case BaseFragment.WALL:
-                index_menuiterm=3;
+                index_menuiterm = 4;
                 mTvToolbarText.setText("幕墙设置");
                 return replaceFragment(WallSettingFragment.newInstance(), position);
-            case BaseFragment.MATRIX:
-                index_menuiterm=4;
-                mTvToolbarText.setText("矩阵");
-                return replaceFragment(MatrixFragment.newInstance(), position);
-            case BaseFragment.SCREEN:
-                index_menuiterm=5;
-                mTvToolbarText.setText("输入");
-                return replaceFragment(InputControlFragment.newInstance(),position);
+            case BaseFragment.CONN:
+                index_menuiterm = 5;
+                mTvToolbarText.setText("连接设置");
+                return replaceFragment(ConnFragment.newInstance(), position);
             default:
                 return replaceFragment(screenShotable, position);
 //                return null;
@@ -240,5 +297,42 @@ public class MainActivity extends AppActivity implements ViewAnimator.ViewAnimat
         return screenShotable;
     }
 
-    
+
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+//                index_menuiterm =1;
+//
+                if (index_menuiterm != 1) {
+                    index_menuiterm = 1;
+                    mTvToolbarText.setText("控制");
+                    if (mPosition != 0) {
+                        View view = findViewById(R.id.content_frame);
+                        int finalRadius = Math.max(view.getWidth(), view.getHeight());
+                        Animator animator = ViewAnimationUtils.createCircularReveal(view, 0, mPosition, 0, finalRadius);
+                        animator.setInterpolator(new AccelerateInterpolator());
+                        animator.setDuration(ViewAnimator.CIRCULAR_REVEAL_ANIMATION_DURATION);
+                        findViewById(R.id.content_overlay).setBackgroundDrawable(new BitmapDrawable(getResources(), ControlFragment.newInstance().getBitmap()));
+                        animator.start();
+                    }
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, ControlFragment.newInstance()).commit();
+                } else {
+                    Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                }
+//                replaceFragment(ControlFragment.newInstance(), 1);
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
 }

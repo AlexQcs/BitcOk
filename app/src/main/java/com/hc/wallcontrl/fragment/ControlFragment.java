@@ -7,24 +7,32 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.bean.ScreenInputBean;
+import com.hc.wallcontrl.bean.ScreenMatrixBean;
+import com.hc.wallcontrl.bean.ScreenOutputBean;
 import com.hc.wallcontrl.com.ClsV59Ctrl;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.service.SocketService;
 import com.hc.wallcontrl.util.ClsCmds;
 import com.hc.wallcontrl.util.ConstUtils;
+import com.hc.wallcontrl.util.HexUtils;
 import com.hc.wallcontrl.util.LogUtil;
+import com.hc.wallcontrl.util.MatrixUtils;
 import com.hc.wallcontrl.util.PrefrenceUtils;
 import com.hc.wallcontrl.util.ToastUtil;
 import com.hc.wallcontrl.util.ViewUtil;
@@ -41,7 +49,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import at.markushi.ui.CircleButton;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -52,6 +59,9 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 //    GestureDetector gd;// 手势监听类
 
     SharedPreferences sp = null;
+
+    //矩阵控制类
+    private MatrixUtils mMatrixUtils;
 
     private InetSocketAddress is = null;
     //private OutputStream writer;
@@ -64,20 +74,27 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     //是否已经连接socket
     boolean bConnected = false;
     int Irs, Ics, Ire, Ice;
+    //输入源spinner的位置
+    int mInputSoureIndex = 0;
 
     private Context mContext;
 
     private Spinner mSignalSourceSpinner, mMatrixInputSpinner, mMatrixSwitchSpinner;
+    private String mSignalSource, mMatrixInput, mMatrixSwitch;
+    private String mMatrixName;
+    private int mMatrixAddr;
+    private ArrayAdapter mMatrixInputAdapter;
 
+    private int mMatrixInputSpinnerPosition;//记录选中位置
     private LinearLayout mLinPutLable, mlinMatrixInput, mLinMatrixSwitch;
 
     //界面滚动按钮
     private Button btnOn, btnOff, btnAV, btnVGA, btnDVI, btnHDMI, btnAV2, btnDP, btnPlan1, btnPlan2, btnPlan3, btnPlan4, btnPlan5, btnPlan6, btnPlan7, btnPlan8, btnPlan9, btnPlan10, btnPlan11, btnPlan12, btnPlan13, btnPlan14, btnPlan15, btnPlan16;
     private Button mSetMatrixInputBtn;
-    private Switch mSingleScreenSwitch, mUseMatrixSwitch;
+    private Switch mSingleScreenSwitch, mUseMatrixSwitch, mModeSetSwitch;
 
-    private CircleButton mTurnUpBtn, mTurnDownBtn, mMuteBtn;
-    private Button mSignalSourceBtn, mInfoBtn, mExitBtn, mUpBtn, mConfirmBtn, mLeftBtn, mMenuBtn, mRightBtn, mFreezeBtn, mDownBtn, mRotateBtn, mPlayBtn, mStopBtn, mPauseBtn, mTattedCodeBtn, mPositionBtn, mColorBtn;
+
+    private TextView mTvMode;
     private int Rs = 4;
     private int Cs = 4;
     private int[] SeltArea = new int[4];
@@ -86,11 +103,15 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 
     Timer timer;
 
-    private Bitmap bitmap;
+    //矩阵发送延时
+    private int mDelayTime = 0;
 
+    private Bitmap bitmap;
+    private List<String> mInputNameList;
     private ArrayList<ScreenInputBean> mListScreenBeen;
     private List<ScreenInputBean> mListScreenApp;
-
+    private List<ScreenMatrixBean> mListMatrixApp;
+    private List<ScreenOutputBean> mListOutputApp;
     //Socket
     private Thread mThread = null;
     private Socket mSocket = null;
@@ -100,6 +121,8 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     private String RevStr = "";
     //Connect to TcpServer
 
+    //选择模式是调用还是保存
+    private boolean mIsSave;
 
     public static ControlFragment newInstance() {
         ControlFragment controlFragment = new ControlFragment();
@@ -116,9 +139,15 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     //初始化数据
     @Override
     public void initData() {
+
+        mMatrixUtils = new MatrixUtils();
+
         Intent intent = new Intent();
         intent.setClass(mContext, SocketService.class);
         mContext.startService(intent);
+
+
+
 
 
         mListScreenBeen = new ArrayList<>();
@@ -129,22 +158,56 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         bConnected = sp.getBoolean(ConstUtils.SP_ISCONN, bConnected);
         mIPString = sp.getString(ConstUtils.SP_IP, mIPString);
         mPortString = sp.getString(ConstUtils.SP_PORT, "8899");
+
+        SeltArea[0]=1;
+        SeltArea[1]=1;
+        SeltArea[2]=Rs;
+        SeltArea[3]=Cs;
+
+        for (int i = 0; i < Rs; i++) {
+            for (int j = 0; j < Cs; j++) {
+                ScreenInputBean screenInputBean=new ScreenInputBean();
+                screenInputBean.setColumn(j+1);
+                screenInputBean.setRow(i+1);
+                mListScreenBeen.add(screenInputBean);
+            }
+        }
         if (!mPortString.equals("")) {
             Port = Integer.parseInt(mPortString);
         } else {
             ToastUtil.showShortMessage("链接地址为空！");
         }
         String listBeanStr = sp.getString(ConstUtils.SP_SCREEN_INPUT_LIST, "");
+        String listMatrixStr = sp.getString(ConstUtils.SP_MATRIX_LIST, "");
+        String listOutputStr=sp.getString(ConstUtils.SP_SCREEN_OUTPUT_LIST,"");
         try {
             mListScreenApp = PrefrenceUtils.String2SceneList(listBeanStr);
+            mListMatrixApp = PrefrenceUtils.String2SceneList(listMatrixStr);
+            mListOutputApp=PrefrenceUtils.String2SceneList(listOutputStr);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        mInputNameList = new ArrayList<>();
 
-        if (bConnected)
-            SetConnect();
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (bConnected){
+//                    SetConnect();
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//
+//            }
+//        }).start();
+
     }
 
     /**
@@ -232,7 +295,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
                     String signalSource = (String) mSignalSourceSpinner.getSelectedItem();
                     String matrixInput = (String) mMatrixInputSpinner.getSelectedItem();
                     String matrixSwitch = (String) mMatrixSwitchSpinner.getSelectedItem();
-                    boolean useMatrix = mUseMatrixSwitch.isSelected();
+                    boolean useMatrix = mUseMatrixSwitch.isChecked();
 
                     targetList.get(i).setSignalSource(signalSource);
                     targetList.get(i).setInputName(matrixInput);
@@ -275,25 +338,9 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         btnPlan8 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnPlan8);
         btnPlan9 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnPlan9);
         mSetMatrixInputBtn = (Button) inflateView.findViewById(R.id.btn_set_matrixinput);
-        mTurnUpBtn = (CircleButton) inflateView.findViewById(R.id.btn_turn_up);
-        mTurnDownBtn = (CircleButton) inflateView.findViewById(R.id.btn_turn_down);
-        mMuteBtn = (CircleButton) inflateView.findViewById(R.id.btn_mute);
-        mSignalSourceBtn = (Button) inflateView.findViewById(R.id.btn_signalsource);
-        mInfoBtn = (Button) inflateView.findViewById(R.id.btn_info);
-        mExitBtn = (Button) inflateView.findViewById(R.id.btn_exit);
-        mUpBtn = (Button) inflateView.findViewById(R.id.btn_up);
-        mConfirmBtn = (Button) inflateView.findViewById(R.id.btn_confirm);
-        mLeftBtn = (Button) inflateView.findViewById(R.id.btn_left);
-        mMenuBtn = (Button) inflateView.findViewById(R.id.btn_menu);
-        mRightBtn = (Button) inflateView.findViewById(R.id.btn_right);
-        mFreezeBtn = (Button) inflateView.findViewById(R.id.btn_freeze);
-        mDownBtn = (Button) inflateView.findViewById(R.id.btn_down);
-        mRotateBtn = (Button) inflateView.findViewById(R.id.btn_rotate);
-        mPlayBtn = (Button) inflateView.findViewById(R.id.btn_play);
-        mPauseBtn = (Button) inflateView.findViewById(R.id.btn_pause);
-        mTattedCodeBtn = (Button) inflateView.findViewById(R.id.btn_tatted_code);
-        mPositionBtn = (Button) inflateView.findViewById(R.id.btn_position);
-        mColorBtn = (Button) inflateView.findViewById(R.id.btn_color);
+
+        mTvMode = (TextView) inflateView.findViewById(R.id.tv_mode);
+
 
         mSignalSourceSpinner = (Spinner) inflateView.findViewById(R.id.spinner_input_source);
         mMatrixInputSpinner = (Spinner) inflateView.findViewById(R.id.spinner_matrix_input);
@@ -301,6 +348,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 
         mUseMatrixSwitch = (Switch) inflateView.findViewById(R.id.switch_usematrix);
         mSingleScreenSwitch = (Switch) inflateView.findViewById(R.id.switch_singlescreen);
+        mModeSetSwitch = (Switch) inflateView.findViewById(R.id.switch_recall_save);
 
         //http://www.jb51.net/article/55329.htm
         btnOn.setOnClickListener(this);
@@ -321,27 +369,24 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         btnPlan8.setOnClickListener(this);
         btnPlan9.setOnClickListener(this);
         mSetMatrixInputBtn.setOnClickListener(this);
-        mTurnUpBtn.setOnClickListener(this);
-        mTurnDownBtn.setOnClickListener(this);
-        mMuteBtn.setOnClickListener(this);
-        mSignalSourceBtn.setOnClickListener(this);
-        mInfoBtn.setOnClickListener(this);
-        mExitBtn.setOnClickListener(this);
-        mUpBtn.setOnClickListener(this);
-        mConfirmBtn.setOnClickListener(this);
-        mLeftBtn.setOnClickListener(this);
-        mMenuBtn.setOnClickListener(this);
-        mRightBtn.setOnClickListener(this);
-        mFreezeBtn.setOnClickListener(this);
-        mDownBtn.setOnClickListener(this);
-        mRotateBtn.setOnClickListener(this);
-        mPlayBtn.setOnClickListener(this);
-        mPauseBtn.setOnClickListener(this);
-        mTattedCodeBtn.setOnClickListener(this);
-        mPositionBtn.setOnClickListener(this);
-        mColorBtn.setOnClickListener(this);
+
         Log.e("Height3322:", String.valueOf(mLinPutLable.getHeight()));
 
+
+        String[] inputMatrixArray = (String[]) mInputNameList.toArray(new String[mInputNameList.size()]);
+        mMatrixInputAdapter = new ArrayAdapter(mContext,android.R.layout.simple_spinner_item, inputMatrixArray);
+        mMatrixInputSpinner.setAdapter(mMatrixInputAdapter);
+        mMatrixInputSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mMatrixInputSpinnerPosition = position + 1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         mUseMatrixSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -351,14 +396,61 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
                 } else {
                     mlinMatrixInput.setVisibility(View.VISIBLE);
                     mLinMatrixSwitch.setVisibility(View.VISIBLE);
+
                 }
             }
         });
+        mMatrixSwitchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mSignalSourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                showMatrixInfo(position);
+                mInputSoureIndex = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mModeSetSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mIsSave = true;
+                    mTvMode.setText("模式保存");
+                } else {
+                    mIsSave = false;
+                    mTvMode.setText("模式调用");
+                }
+            }
+        });
+
+
+        if (mListMatrixApp != null && mListMatrixApp.size() != 0) {
+            mInputNameList = mListMatrixApp.get(0).getMatrixInputName();
+        } else {
+            mMatrixInputSpinner.setVisibility(View.INVISIBLE);
+            mSetMatrixInputBtn.setClickable(false);
+        }
+
         setMyTable();
         //Toast.makeText(MainActivity.this,"OnStart",Toast.LENGTH_SHORT).show();
 
-        SetMainFrm();
+//        SetMainFrm();
     }
+
 
     //绑定fragment布局
     @Override
@@ -366,11 +458,6 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         return R.layout.fragment_control;
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     private void SetMainFrm() {
         //ViewGroup.LayoutParams lyParam = new ActionBar.LayoutParams();
@@ -384,6 +471,15 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         return false;
     }
 
+
+    private void showMatrixInfo(int index) {
+        if (mListMatrixApp == null || index >= mListMatrixApp.size()) return;
+        ScreenMatrixBean screenMatrixBean = mListMatrixApp.get(index);
+        mInputNameList = screenMatrixBean.getMatrixInputName();
+        String[] inputMatrixArray = (String[]) mInputNameList.toArray(new String[mInputNameList.size()]);
+        mMatrixInputAdapter = new ArrayAdapter(mContext, android.R.layout.simple_spinner_item, inputMatrixArray);
+        mMatrixInputSpinner.setAdapter(mMatrixInputAdapter);
+    }
 
     private byte[] GetRowColumns() {
         Irs = SeltArea[0];
@@ -470,6 +566,18 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         timer.schedule(task, 10, 1000);
     }
 
+    private Handler mToastHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x11:
+                    String ip = msg.getData().getString("ip");
+                    ToastUtil.showShortMessage(ip);
+                    break;
+            }
+        }
+    };
+
     //连接操作
     private void SetConnect() {
         if (!mPortString.equals("")) Port = Integer.parseInt(mPortString);
@@ -481,60 +589,21 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         Intent intent = new Intent();
         intent.setAction(ConstUtils.ACTION_CONN);
         intent.putExtra(ConstUtils.BROADCAST_IP, mIPString);
-        intent.putExtra(ConstUtils.BROADCAST_ISCONN,bConnected);
+        intent.putExtra(ConstUtils.BROADCAST_ISCONN, bConnected);
         int socketPort = Integer.parseInt(mPortString);
         intent.putExtra(ConstUtils.BROADCAST_PORT, socketPort);
-        getActivity().sendBroadcast(intent);
+        mContext.sendBroadcast(intent);
 
         String result = mIPString + ":" + mPortString;
-        ToastUtil.showShortMessage(result);
+        Message msg = new Message();
+        msg.what = 0x11;
+        Bundle bundle = new Bundle();
+        bundle.putString("ip", result);
+        msg.setData(bundle);
+        mToastHandler.sendMessage(msg);
+//        ToastUtil.showShortMessage(result);
     }
 
-    //设置表格
-    private void SetTable() {
-        //GetSize();
-
-        mLinPutLable.removeAllViews();
-        GetRowColumns();
-        //table = new MyTable(MainActivity.this, llPutLable.getWidth(),llPutLable.getHeight());
-        mMyTable = new MyTable(mContext, mLinPutLable.getWidth(), mLinPutLable.getHeight());
-
-        Log.e("Height3321:", String.valueOf(mLinPutLable.getHeight()));
-        //table.mySetTableHeight(llPutLable.getMeasuredHeight());
-
-        mMyTable.mySetRows(Rs);
-        mMyTable.mySetCols(Cs);
-
-        mMyTable.LoadTable();
-        mLinPutLable.addView(mMyTable);
-
-        //Toast.makeText(MainActivity.this,"3",Toast.LENGTH_SHORT).show();
-
-//        mMyTable.setTableOnClickListener(new MyTable.OnTableClickListener() {
-//            @Override
-//            public void onTableClickListener(int x, int y, Cursor c) {
-//                String str = "Pos:(" + String.valueOf(y + 1) + "," + String.valueOf(x + 1) + ")";
-//                //Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show();
-//                //Log.e("Click", str);
-//
-//            }
-//        });
-
-//        mMyTable.setTableOnTouchListener(new MyTable.OnTableTouchListener() {
-//            @Override
-//            public void onTableTouchListener(View v, MotionEvent event) {
-//                SeltArea = mMyTable.myGetSeltArea();
-//                if (SeltArea[0] != 0) {
-//                    Log.e("SelectedArea: ", String.valueOf(SeltArea[0]) + ":" + String.valueOf(SeltArea[1]) + "===" + String.valueOf(SeltArea[2]) + ":" + String.valueOf(SeltArea[3]));
-//
-//                }
-//            }
-//        });
-
-        GetSize();
-
-        Log.e("llLayout's Height", String.valueOf(mLinPutLable.getHeight()));
-    }
 
     //控件点击事件
     @Override
@@ -573,36 +642,34 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
                 TestCmd(GetRowColumns(), SourceSw, ClsCmds.DP, bSFWall);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan1:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x01);
+                clientSetPlan(mIsSave, 1, (byte) 0x01);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan2:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x02);
+                clientSetPlan(mIsSave, 2, (byte) 0x02);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan3:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x03);
+                clientSetPlan(mIsSave, 3, (byte) 0x03);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan4:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x04);
+                clientSetPlan(mIsSave, 4, (byte) 0x04);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan5:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x05);
+                clientSetPlan(mIsSave, 5, (byte) 0x05);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan6:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x06);
+                clientSetPlan(mIsSave, 6, (byte) 0x06);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan7:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x07);
+                clientSetPlan(mIsSave, 7, (byte) 0x07);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan8:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x08);
+                clientSetPlan(mIsSave, 8, (byte) 0x08);
                 break;
             case com.hc.wallcontrl.R.id.btnPlan9:
-                TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, (byte) 0x09);
+                clientSetPlan(mIsSave, 9, (byte) 0x09);
                 break;
             case R.id.btn_set_matrixinput:
-                if (mListScreenApp != null && mListScreenBeen.size() > 0) {
-                    setMatrixInfo(mListScreenBeen, mListScreenApp);
-                }
+                clientSetSource(mInputSoureIndex, SourceSw, bSFWall);
                 break;
             case R.id.btn_turn_up:
                 TestCmd(GetRowColumns(), ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrFWall);
@@ -699,6 +766,96 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         }
     }
 
+    void clientSetSource(int sourceIndex, byte SourceSw, byte bSFWall) {
+        if (mListScreenApp != null && mListScreenBeen.size() > 0) {
+            setMatrixInfo(mListScreenBeen, mListScreenApp);
+            if (!mUseMatrixSwitch.isChecked()) userMatrixCtrl();
+            byte sourceByte = 0x00;
+            switch (sourceIndex) {
+                case 0:
+                    sourceByte = ClsCmds.AV;
+                    break;
+                case 1:
+                    sourceByte = ClsCmds.AV2;
+                    break;
+                case 2:
+                    sourceByte = ClsCmds.VGA;
+                    break;
+                case 3:
+                    sourceByte = ClsCmds.DVI;
+                    break;
+                case 4:
+                    sourceByte = ClsCmds.HDMI;
+                    break;
+//                case 5:
+//                    sourceByte = ClsCmds.Svideo;
+//                    break;
+//                case 6:
+//                    sourceByte = ClsCmds.YPBPR;
+//                    break;
+//                case 7:
+//                    sourceByte = ClsCmds.VGA;
+//                    break;
+//                case 8:
+//                    sourceByte = ClsCmds.DVI;
+//                    break;
+//                case 9:
+//                    sourceByte = ClsCmds.HDMI;
+//                    break;
+//                case 10:
+//                    sourceByte = ClsCmds.HDMI2;
+//                    break;
+//                case 11:
+//                    sourceByte = ClsCmds.HDMI3;
+//                    break;
+//                case 12:
+//                    sourceByte = ClsCmds.DMP1;
+//                    break;
+//                case 13:
+//                    sourceByte = ClsCmds.DMP2;
+//                    break;
+                default:
+                    break;
+            }
+            byte finalSourceByte = sourceByte;
+            new Thread() {
+                public void run() {
+                    try {
+                        Thread.sleep(500);
+                        TestCmd(GetRowColumns(), SourceSw, finalSourceByte, bSFWall);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }.start();
+
+        }
+    }
+
+    void matrixSetPlan(boolean isSave, int data) {
+        if (isSave) {
+            userMatrixSaveModeCtrl(ConstUtils.VGAMT, data);
+        } else {
+            userMatrixRecallModeCtrl(ConstUtils.VGAMT, data);
+        }
+    }
+
+    void clientSetPlan(boolean isSave, int matrixData, byte data) {
+        matrixSetPlan(isSave, matrixData);
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                    if (isSave) {
+                        TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.SavaPlan, data);
+                    } else {
+                        TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, data);
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        }.start();
+    }
+
     //连接socket服务
     private void Connect2TcpServer() {
         try {
@@ -714,16 +871,6 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         //return mSocket;
     }
 
-    //发送数据
-    private void Send2Server(byte[] BufMsg) {
-        try {
-            mWriter.write(BufMsg);
-            mWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     //线程：监听服务器发来的消息
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -732,6 +879,101 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         }
     };
 
+
+    //使用矩阵控制
+    private void userMatrixCtrl() {
+        if (mListMatrixApp == null || mListMatrixApp.size() == 0) {
+            ToastUtil.showShortMessage("请先设置矩阵输入");
+            return;
+        } else if (mListScreenBeen == null || mListScreenBeen.size() == 0) {
+            ToastUtil.showShortMessage("请先选择屏幕");
+            return;
+        }else if (mListOutputApp==null||mListOutputApp.size()==0){
+            ToastUtil.showShortMessage("请先设置屏幕");
+            return;
+        }
+        int[] input = new int[1];//矩阵输入
+        int[] output = new int[mListScreenBeen.size()];//墙面输出
+        int outCount;//输出数量
+        mMatrixUtils.mxInSum = input.length;
+        mMatrixUtils.mxOutSum = mListScreenBeen.size();
+        mMatrixUtils.matrixInputMax = mInputNameList.size();
+        outCount = mListScreenBeen.size();
+
+//        for (int i = 0; i < mListMatrixApp.size(); i++) {
+        input[0] = mMatrixInputSpinnerPosition;
+//        }
+        for (int i = 0; i < outCount; i++) {
+            ScreenInputBean screenBean = mListScreenBeen.get(i);
+            for (int j = 0; j < mListOutputApp.size(); j++) {
+                if (screenBean.getRow() == mListOutputApp.get(j).getRow() && screenBean.getColumn() == mListOutputApp.get(j).getColumn()) {
+                    output[i] = mListOutputApp.get(j).getMatrixOutputStream();
+                }
+            }
+        }
+
+        mMatrixName="";
+        mSignalSource = mSignalSourceSpinner.getSelectedItem().toString();
+        mMatrixInput = mMatrixInputSpinner.getSelectedItem().toString();
+
+        LogUtil.e(mMatrixInput + "");
+        LogUtil.e(mSignalSource + "");
+
+        for (ScreenMatrixBean bean : mListMatrixApp) {
+            if (mSignalSource.equals(bean.getMatrixCategory())) {
+                mMatrixName = bean.getMatrixFactory().getMatrixName();
+                mMatrixAddr = bean.getMatrixFactory().getAddr();
+                mDelayTime = bean.getDelaytime();
+            }
+        }
+
+        mMatrixSwitch = mMatrixSwitchSpinner.getSelectedItem().toString();
+
+        List<String> datas = mMatrixUtils.matrixControl(mMatrixName, mSignalSource, mMatrixSwitch, mMatrixAddr, input, output);
+        for (String data : datas) {
+            Log.e("返回数据", data + "。");
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < datas.size(); i++) {
+                    Intent intent = new Intent();
+                    intent.setAction(ConstUtils.ACTION_SEND);
+                    intent.putExtra(ConstUtils.BROADCAST_BUFF, HexUtils.hexStringToByte(datas.get(i)));
+
+                    getActivity().sendBroadcast(intent);
+                    try {
+                        Thread.sleep(mDelayTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+
+    //使用矩阵控制
+    private void userMatrixSaveModeCtrl(final String matrixName, final int mode) {
+
+        String data = mMatrixUtils.matrixSavePlan(matrixName, mode);
+        Intent intent = new Intent();
+        intent.setAction(ConstUtils.ACTION_SEND);
+        intent.putExtra(ConstUtils.BROADCAST_BUFF, HexUtils.hexStringToByte(data));
+        getActivity().sendBroadcast(intent);
+
+    }
+
+    //使用矩阵控制
+    private void userMatrixRecallModeCtrl(final String matrixName, final int mode) {
+        String data = mMatrixUtils.matrixRecallPlan(matrixName, mode);
+        Intent intent = new Intent();
+        intent.setAction(ConstUtils.ACTION_SEND);
+        intent.putExtra(ConstUtils.BROADCAST_BUFF, HexUtils.hexStringToByte(data));
+        getActivity().sendBroadcast(intent);
+
+    }
 
     @Override
     public void takeScreenShot() {
@@ -773,6 +1015,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     public Bitmap getBitmap() {
         return bitmap;
     }
+
 }
 
 

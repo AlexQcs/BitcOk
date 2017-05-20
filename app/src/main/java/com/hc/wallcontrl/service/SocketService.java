@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -28,6 +29,8 @@ import java.net.Socket;
  */
 
 public class SocketService extends Service {
+    //啥书
+    SharedPreferences sp = null;
 
     private final static int CONN = 0x11;
     private final static int CLOSE = 0x12;
@@ -48,6 +51,13 @@ public class SocketService extends Service {
     private Thread mConnThread;
     private Thread mCloseThread;
     private boolean flag = true;
+    int Port = 8899;
+    //socket地址
+    private String mIPString = "192.168.1.11";
+    //socket端口
+    private String mPortString = "8899";
+    //是否已经连接socket
+    boolean bConnected = false;
     private Handler mConnHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -66,6 +76,8 @@ public class SocketService extends Service {
         }
     };
 
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -77,6 +89,16 @@ public class SocketService extends Service {
         super.onCreate();
         mSocket = new Socket();
         mWeakHandler = new WeakHandler();
+        sp = this.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
+        bConnected = sp.getBoolean(ConstUtils.SP_ISCONN, bConnected);
+        mSocketIp = sp.getString(ConstUtils.SP_IP, mIPString);
+        mSocketPort =Integer.parseInt(sp.getString(ConstUtils.SP_PORT, "8899"));
+        isConn=bConnected;
+        if (!mSocket.isConnected()) {
+            mConnThread = new Thread(mConnRunnable);
+            mConnThread.start();
+        }
+
         mSocketSerrviceBroadCast = new SocketSerrviceBroadCast();
         registerBroadcast();
     }
@@ -97,7 +119,7 @@ public class SocketService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtil.e("SocketSerrvice:" + "接收到消息");
+//            LogUtil.e("SocketSerrvice:" + "接收到消息");
             String action = intent.getAction();
             switch (action) {
                 case ConstUtils.ACTION_CONN:
@@ -160,7 +182,7 @@ public class SocketService extends Service {
         try {
             mSocket.setSoLinger(true, 2);
             mSocketAddress = new InetSocketAddress(mSocketIp, mSocketPort);
-            mSocket.connect(mSocketAddress, 10000);
+            mSocket.connect(mSocketAddress, 1000);
             mSocketReader = mSocket.getInputStream();
             mSocketWriter = mSocket.getOutputStream();
 
@@ -182,8 +204,9 @@ public class SocketService extends Service {
     void closeSocket() {
         try {
             if (mSocket != null && mSocket.isConnected()) {
-                mSocket.shutdownInput();
-                mSocket.shutdownOutput();
+
+//                mSocket.shutdownInput();
+//                mSocket.shutdownOutput();
                 mSocket.close();
                 Message closeMsg = new Message();
                 closeMsg.what = CLOSE;
@@ -199,8 +222,11 @@ public class SocketService extends Service {
     void sendMsgToSocket(byte[] bytes) {
         try {
             if (mSocket != null && mSocket.isConnected()) {
-                mSocketWriter.write(bytes);
-                mSocketWriter.flush();
+                if (bytes!=null&&bytes.length!=0){
+                    mSocketWriter.write(bytes);
+                    mSocketWriter.flush();
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();

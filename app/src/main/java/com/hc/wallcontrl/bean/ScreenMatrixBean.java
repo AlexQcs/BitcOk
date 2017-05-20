@@ -1,61 +1,35 @@
 package com.hc.wallcontrl.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by alex on 2017/4/21.
  */
 
-public class ScreenMatrixBean implements Serializable{
-    private int column;//列
-    private int row;//排
+public class ScreenMatrixBean implements Serializable {
     private String matrixCategory;//矩阵类型
-    private String matrixFactory;//矩阵厂家
-    private int inputQuan;//输入总数
+    private MatrixFactory matrixFactory;
     private int delaytime;//命令延时
-    private String matrixStream;//输出通道
-    private int addr;//设备地址
-    //矩阵输入名称
-    private String matrixInputName;
+    private int inputQuan;//输入总数
+    private List<String> matrixInputName;
+//    //A:0 v:1 AV:2
+//    private int matrixSwitch;
+//
+//    public int getMatrixSwitch() {
+//        return matrixSwitch;
+//    }
+//
+//    public void setMatrixSwitch(int matrixSwitch) {
+//        this.matrixSwitch = matrixSwitch;
+//    }
 
-    public String getMatrixInputName() {
-        return matrixInputName;
+    public MatrixFactory getMatrixFactory() {
+        return matrixFactory;
     }
 
-    public void setMatrixInputName(String matrixInputName) {
-        this.matrixInputName = matrixInputName;
-    }
-
-    public String getMatrixStream() {
-        return matrixStream;
-    }
-
-    public void setMatrixStream(String matrixStream) {
-        this.matrixStream = matrixStream;
-    }
-
-    public int getAddr() {
-        return addr;
-    }
-
-    public void setAddr(int addr) {
-        this.addr = addr;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
+    public void setMatrixFactory(MatrixFactory matrixFactory) {
+        this.matrixFactory = matrixFactory;
     }
 
     public String getMatrixCategory() {
@@ -66,12 +40,12 @@ public class ScreenMatrixBean implements Serializable{
         this.matrixCategory = matrixCategory;
     }
 
-    public String getMatrixFactory() {
-        return matrixFactory;
+    public int getDelaytime() {
+        return delaytime;
     }
 
-    public void setMatrixFactory(String matrixFactory) {
-        this.matrixFactory = matrixFactory;
+    public void setDelaytime(int delaytime) {
+        this.delaytime = delaytime;
     }
 
     public int getInputQuan() {
@@ -82,26 +56,53 @@ public class ScreenMatrixBean implements Serializable{
         this.inputQuan = inputQuan;
     }
 
-    public int getDelaytime() {
-        return delaytime;
+    public List<String> getMatrixInputName() {
+        return matrixInputName;
     }
 
-    public void setDelaytime(int delaytime) {
-        this.delaytime = delaytime;
+    public void setMatrixInputName(List<String> matrixInputName) {
+        this.matrixInputName = matrixInputName;
     }
+
+    public static class MatrixFactory implements Serializable {
+        private String matrixName;
+        private int addr;
+        private int isHasAddr;
+
+        public int getIsHasAddr() {
+            return isHasAddr;
+        }
+
+        public void setIsHasAddr(int isHasAddr) {
+            this.isHasAddr = isHasAddr;
+        }
+
+        public String getMatrixName() {
+            return matrixName;
+        }
+
+        public void setMatrixName(String matrixName) {
+            this.matrixName = matrixName;
+        }
+
+        public int getAddr() {
+            return addr;
+        }
+
+        public void setAddr(int addr) {
+            this.addr = addr;
+        }
+    }
+
 
     @Override
     public String toString() {
-        return "ScreenBean{" +
-                "column=" + column +
-                ", row=" + row +
-                ", matrixCategory='" + matrixCategory + '\'' +
-                ", matrixFactory='" + matrixFactory + '\'' +
-                ", inputQuan=" + inputQuan +
+        return "ScreenMatrixBean{" +
+                "matrixCategory='" + matrixCategory + '\'' +
+                ", matrixFactory=" + matrixFactory +
                 ", delaytime=" + delaytime +
-                ", matrixStream='" + matrixStream + '\'' +
-                ", addr=" + addr +
-                ", matrixInputName='" + matrixInputName + '\'' +
+                ", inputQuan=" + inputQuan +
+                ", matrixInputName=" + matrixInputName +
                 '}';
     }
 }

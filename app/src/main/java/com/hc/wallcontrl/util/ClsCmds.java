@@ -14,11 +14,22 @@ public class ClsCmds {
     public static final byte Source = 0x30;
     public static final byte AV = 0x00;
     public static final byte AV2 = 0x01;
+    public static final byte AV3 = 0x02;
+    public static final byte AV4 = 0x03;
+    public static final byte QUAD = 0x04;
+    public static final byte Svideo = 0x09;
+    public static final byte YPBPR=0x0c;
     public static final byte VGA = 0x0d;
     public static final byte DVI = 0x0f;
     public static final byte HDMI = 0x10;
+    public static final byte HDMI2 = 0x11;
+    public static final byte HDMI3 = 0x12;
+    public static final byte DMP1 = 0x13;
+    public static final byte DMP2 = 0x14;
     public static final byte USB = 0x00;
     public static final byte DP = 0x13;
+
+    public static final byte SavaPlan= (byte) 0x82;
 
     public static final byte RecallPlan = (byte) 0x83;
 

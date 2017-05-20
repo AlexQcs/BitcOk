@@ -3,17 +3,18 @@ package com.hc.wallcontrl.view;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import com.hc.wallcontrl.R;
+import com.hc.wallcontrl.adapter.DropRecyclerAdapter;
 
 /**
  * Created by alex on 2017/4/28.
@@ -23,38 +24,56 @@ public class DropEditText extends android.support.v7.widget.AppCompatEditText im
 
     private Drawable mDrawable;//显示的图
     private PopupWindow mPopupWindow;//点击图片弹出的window对象
-    private ListView mPopListView;//下拉列表
+    private RecyclerView mPopListView;//下拉列表
     private int mDropDrawableResId;//下拉图标
     private int mRiseDrawableResId;//收起图标
     private Context mContext;
+    private int mCurrentItemIndex;
+    private DropRecyclerAdapter mAdapter;
+    private OnListViewItemClickListener mOnListViewItemClickListener;
 
     public DropEditText(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public DropEditText(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public DropEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
-
     }
 
     private void init(Context context) {
         mContext = context;
-        mPopListView = new ListView(context);
+        mPopListView = new RecyclerView(context);
         mDropDrawableResId = R.drawable.ic_arrow_drop_down_black_24dp;
         mRiseDrawableResId = R.drawable.ic_arrow_drop_down_black_24dp;
         showDropDrawable();//默认显示下拉图标
-        mPopListView.setOnItemClickListener(this);
+        mPopListView.setLayoutManager(new LinearLayoutManager(context));
+
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        this.setText(mPopListView.getAdapter().getItem(position).toString());
+//        if (mOnListViewItemClickListener!=null){
+//            mOnListViewItemClickListener.onClick(position);
+//        }
+//        this.setText( mPopListView.getAdapter().getItemViewType(position).toString());
+//        mAdapter.setOnListViewItemClickListener(new DropRecyclerAdapter.OnRecyclerViewItemClickListenner() {
+//            @Override
+//            public void onItemClick(View v, int p) {
+//                v=view;
+//                p=position;
+//
+//            }
+//        });
+
+    }
+
+    public void dismiss(){
         mPopupWindow.dismiss();
     }
 
@@ -74,7 +93,7 @@ public class DropEditText extends android.support.v7.widget.AppCompatEditText im
                     closeSoftInput();
                     showPopWindow();
                     return true;
-                }else {
+                } else {
                     showSoftInput();
                 }
             }
@@ -89,9 +108,9 @@ public class DropEditText extends android.support.v7.widget.AppCompatEditText im
     }
 
     private void showDropDrawable() {
-        mDrawable=ContextCompat.getDrawable(mContext,R.drawable.ic_arrow_drop_down_black_24dp);
-        mDrawable.setBounds(0,0,mDrawable.getIntrinsicWidth(),mDrawable.getIntrinsicHeight());
-        setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],mDrawable,getCompoundDrawables()[3]);
+        mDrawable = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_drop_down_black_24dp);
+        mDrawable.setBounds(0, 0, mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
+        setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], mDrawable, getCompoundDrawables()[3]);
     }
 
     private void showRiseDrawable() {
@@ -104,11 +123,11 @@ public class DropEditText extends android.support.v7.widget.AppCompatEditText im
 
     private void closeSoftInput() {
         //InputMethodManager是一个用于控制显示或隐藏输入法面板的类（当然还有其他作用）。
-        InputMethodManager imm= (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(this.getWindowToken(),0);
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
     }
 
-    private void showSoftInput(){
+    private void showSoftInput() {
         setFocusable(true);
         setFocusableInTouchMode(true);
         requestFocus();
@@ -119,19 +138,37 @@ public class DropEditText extends android.support.v7.widget.AppCompatEditText im
         super.onLayout(changed, left, top, right, bottom);
         if (changed) {
             mPopupWindow = new PopupWindow(mPopListView, getWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
-            mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(mContext,R.color.deepgray));
+            mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.color.deepgray));
             mPopupWindow.setFocusable(true);//允许让popwindow获取焦点
             mPopupWindow.setOnDismissListener(this);
         }
     }
 
-    public void setAdapter(BaseAdapter adapter) {
-        mPopListView.setAdapter(adapter);
+    public void setAdapter(DropRecyclerAdapter adapter) {
+        mAdapter=adapter;
+        mPopListView.setAdapter(mAdapter);
     }
 
 
     @Override
     public void onDismiss() {
         showDropDrawable();//当popwindow消失时显示下拉图标
+    }
+
+    public int getCurrentItemIndex() {
+        return mCurrentItemIndex;
+    }
+
+    public void setCurrentItemIndex(int currentItemIndex) {
+        mCurrentItemIndex = currentItemIndex;
+    }
+
+    public void setItemClickListener(OnListViewItemClickListener onListViewItemClickListener) {
+        mOnListViewItemClickListener = onListViewItemClickListener;
+    }
+
+
+    public interface OnListViewItemClickListener {
+        void onClick(int position);
     }
 }

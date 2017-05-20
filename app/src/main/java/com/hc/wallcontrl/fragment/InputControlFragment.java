@@ -1,33 +1,22 @@
 package com.hc.wallcontrl.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.hc.wallcontrl.R;
-import com.hc.wallcontrl.bean.ScreenInputBean;
+import com.hc.wallcontrl.com.ClsV59Ctrl;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
+import com.hc.wallcontrl.util.ClsCmds;
 import com.hc.wallcontrl.util.ConstUtils;
-import com.hc.wallcontrl.util.LogUtil;
-import com.hc.wallcontrl.util.PrefrenceUtils;
-import com.hc.wallcontrl.view.InputSettingDialog;
-import com.hc.wallcontrl.view.MyTable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import at.markushi.ui.CircleButton;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -42,24 +31,13 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
     private Context mContext;
     private SharedPreferences sp = null;
     boolean bConnected = false;
+    private byte[] addr=new byte[4];
 
-    private LinearLayout mLinPutLable;
-    private Button mSetMatrixBtn;
-    private TextView mMatrixCateTv, mSingleScreenTv, mUseMatrixTv, mInputNameTv, mMatrixSwitchTv;
-
-    private InputSettingDialog mInputSerttingDialog;
+    private CircleButton mTurnUpBtn, mTurnDownBtn, mMuteBtn;
+    private Button mSignalSourceBtn, mInfoBtn, mExitBtn, mUpBtn, mConfirmBtn, mLeftBtn, mMenuBtn, mRightBtn, mFreezeBtn, mDownBtn, mRotateBtn, mPlayBtn, mStopBtn, mPauseBtn, mTattedCodeBtn, mPositionBtn, mColorBtn;
+    private Button mNum00Btn, mNum01Btn, mNum02Btn, mNum03Btn, mNum04Btn, mNum05Btn, mNum06Btn, mNum07Btn, mNum08Btn, mNum09Btn;
 
     private Bitmap bitmap;
-
-    private MyTable mMyTable;
-    private int[] SeltArea = new int[4];
-    //行开始坐标 列开始坐标 行结束坐标 列结束坐标
-    int Irs, Ics, Ire, Ice;
-    private int Rs = 4;
-    private int Cs = 4;
-
-    private ArrayList<ScreenInputBean> mListScreenBeen;
-    private List<ScreenInputBean> mListScreenApp;
 
     public static InputControlFragment newInstance() {
         return new InputControlFragment();
@@ -78,168 +56,102 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
 
     @Override
     public void initData() {
-        mListScreenBeen = new ArrayList<>();
         sp = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         if (sp == null) return;
-        Rs = sp.getInt(ConstUtils.SP_ROWS, Rs);
-        Cs = sp.getInt(ConstUtils.SP_COLUMNS, Cs);
         bConnected = sp.getBoolean(ConstUtils.SP_ISCONN, bConnected);
-        String listBeanStr = sp.getString(ConstUtils.SP_SCREEN_INPUT_LIST, "");
-        try {
-            mListScreenApp = PrefrenceUtils.String2SceneList(listBeanStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        addr[0]=0x00;
+        addr[1]=0x00;
+        addr[2]= (byte) 0xff;
+        addr[3]= (byte) 0xff;
     }
 
     @Override
     public void initView(View inflateView, Bundle savedInstanceState) {
-        mLinPutLable = (LinearLayout) inflateView.findViewById(R.id.lin_table);
+        mTurnUpBtn = (CircleButton) inflateView.findViewById(R.id.btn_turn_up);
+        mTurnDownBtn = (CircleButton) inflateView.findViewById(R.id.btn_turn_down);
+        mMuteBtn = (CircleButton) inflateView.findViewById(R.id.btn_mute);
+        mNum00Btn = (Button) inflateView.findViewById(R.id.btn_num_00);
+        mNum01Btn = (Button) inflateView.findViewById(R.id.btn_num_01);
+        mNum02Btn = (Button) inflateView.findViewById(R.id.btn_num_02);
+        mNum03Btn = (Button) inflateView.findViewById(R.id.btn_num_03);
+        mNum04Btn = (Button) inflateView.findViewById(R.id.btn_num_04);
+        mNum05Btn = (Button) inflateView.findViewById(R.id.btn_num_05);
+        mNum06Btn = (Button) inflateView.findViewById(R.id.btn_num_06);
+        mNum07Btn = (Button) inflateView.findViewById(R.id.btn_num_07);
+        mNum08Btn = (Button) inflateView.findViewById(R.id.btn_num_08);
+        mNum09Btn = (Button) inflateView.findViewById(R.id.btn_num_09);
+        mSignalSourceBtn = (Button) inflateView.findViewById(R.id.btn_signalsource);
+        mInfoBtn = (Button) inflateView.findViewById(R.id.btn_info);
+        mExitBtn = (Button) inflateView.findViewById(R.id.btn_exit);
+        mUpBtn = (Button) inflateView.findViewById(R.id.btn_up);
+        mConfirmBtn = (Button) inflateView.findViewById(R.id.btn_confirm);
+        mLeftBtn = (Button) inflateView.findViewById(R.id.btn_left);
+        mMenuBtn = (Button) inflateView.findViewById(R.id.btn_menu);
+        mRightBtn = (Button) inflateView.findViewById(R.id.btn_right);
+        mFreezeBtn = (Button) inflateView.findViewById(R.id.btn_freeze);
+        mDownBtn = (Button) inflateView.findViewById(R.id.btn_down);
+        mRotateBtn = (Button) inflateView.findViewById(R.id.btn_rotate);
+        mPlayBtn = (Button) inflateView.findViewById(R.id.btn_play);
+        mPauseBtn = (Button) inflateView.findViewById(R.id.btn_pause);
+        mTattedCodeBtn = (Button) inflateView.findViewById(R.id.btn_tatted_code);
+        mPositionBtn = (Button) inflateView.findViewById(R.id.btn_position);
+        mColorBtn = (Button) inflateView.findViewById(R.id.btn_color);
 
-        mSetMatrixBtn = (Button) inflateView.findViewById(R.id.btn_set_input);
-        mMatrixCateTv = (TextView) inflateView.findViewById(R.id.tv_matirx_category);
-        mMatrixSwitchTv = (TextView) inflateView.findViewById(R.id.tv_matirx_switch);
-        mInputNameTv = (TextView) inflateView.findViewById(R.id.tv_inputname);
-        mUseMatrixTv = (TextView) inflateView.findViewById(R.id.tv_usematirx);
-        mSingleScreenTv = (TextView) inflateView.findViewById(R.id.tv_singlescreen);
+        mTurnUpBtn.setOnClickListener(this);
+        mTurnDownBtn.setOnClickListener(this);
+        mMuteBtn.setOnClickListener(this);
+        mSignalSourceBtn.setOnClickListener(this);
+        mInfoBtn.setOnClickListener(this);
+        mExitBtn.setOnClickListener(this);
+        mUpBtn.setOnClickListener(this);
+        mConfirmBtn.setOnClickListener(this);
+        mLeftBtn.setOnClickListener(this);
+        mMenuBtn.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
+        mFreezeBtn.setOnClickListener(this);
+        mDownBtn.setOnClickListener(this);
+        mRotateBtn.setOnClickListener(this);
+        mPlayBtn.setOnClickListener(this);
+        mPauseBtn.setOnClickListener(this);
+        mTattedCodeBtn.setOnClickListener(this);
+        mPositionBtn.setOnClickListener(this);
 
-
-
-        mSetMatrixBtn.setOnClickListener(this);
-        setMatirxSetDialog();
-        setMyTable();
+        mColorBtn.setOnClickListener(this);
+        mNum00Btn.setOnClickListener(this);
+        mNum01Btn.setOnClickListener(this);
+        mNum02Btn.setOnClickListener(this);
+        mNum03Btn.setOnClickListener(this);
+        mNum04Btn.setOnClickListener(this);
+        mNum05Btn.setOnClickListener(this);
+        mNum06Btn.setOnClickListener(this);
+        mNum07Btn.setOnClickListener(this);
+        mNum08Btn.setOnClickListener(this);
+        mNum09Btn.setOnClickListener(this);
     }
 
-    void setMatirxSetDialog() {
-        mInputSerttingDialog = new InputSettingDialog(mContext, R.style.CustomDatePickerDialog);
-        Window window = mInputSerttingDialog.getWindow();
-        window.setGravity(Gravity.BOTTOM);
-        window.setWindowAnimations(R.style.MatrixDialogStyle);
-        WindowManager.LayoutParams lp = window.getAttributes();
-        lp.x = 0;
-        lp.y = -20;
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.alpha = 9f;
-        window.setAttributes(lp);
-        mInputSerttingDialog.setOnCancelClickListener(new InputSettingDialog.onCancelClickListener() {
-            @Override
-            public void onClick() {
-                mInputSerttingDialog.dismiss();
-            }
-        });
+    private void TestCmd(byte[] addr, byte Fun, byte ValueH, byte ValueL) {
+        if (!bConnected) return;
 
-        mInputSerttingDialog.setOnConfirmClickListener(new InputSettingDialog.onConfirmClickListener() {
-            @Override
-            public void onClick() {
-                Log.e("mInputDialog:信号源", mInputSerttingDialog.getInputSource());
-                Log.e("mInputDialog:矩阵输入", mInputSerttingDialog.getMatrixInput());
-                Log.e("mInputDialog:矩阵切换", mInputSerttingDialog.getMatrixSwitch());
-                Log.e("mInputDialog:单屏模式", mInputSerttingDialog.isSingleScreen() + "");
-                Log.e("mInputDialog:使用矩阵", mInputSerttingDialog.isUseMatrix() + "");
-                setMatrixInfo(mListScreenBeen, mListScreenApp, mInputSerttingDialog);
-                mInputSerttingDialog.dismiss();
-            }
+        /*
+        byte[] Buf = new byte[7];
+        Buf[0] = (byte) 0xf5;
+        Buf[1] = (byte) 0xb0;
+        Buf[2] = (byte)((addr[0]<<4)+(addr[1]&0x0f));
+        Buf[3] = (byte)((addr[2]<<4)+(addr[3]&0x0f));
+        Buf[4] = (byte)Fun;
+        Buf[5] = (byte)Value;
+        Buf[6] = (byte) 0xae;
+        */
+        byte[] Buf = ClsV59Ctrl.GetCmd(addr, Fun, ValueH, ValueL, ClsCmds.ModeW);
 
-
-        });
-    }
-
-    void setMatrixInfo(ArrayList<ScreenInputBean> resList, List<ScreenInputBean> targetList, InputSettingDialog dialog) {
-        for (ScreenInputBean screenInputBean : resList) {
-            for (int i = 0; i < targetList.size(); i++) {
-                if (screenInputBean.getRow() == targetList.get(i).getRow() && screenInputBean.getColumn() == targetList.get(i).getColumn()) {
-                    targetList.get(i).setInputName(dialog.getMatrixInput());
-                    targetList.get(i).setSignalSource(dialog.getInputSource());
-                    targetList.get(i).setSwitchCate(dialog.getMatrixSwitch());
-                    targetList.get(i).setUseMatrix(dialog.isUseMatrix());
-                }
-            }
-        }
-        SharedPreferences.Editor editor = sp.edit();
         try {
-            editor.putString(ConstUtils.SP_SCREEN_INPUT_LIST, PrefrenceUtils.SceneList2String(targetList));
-        } catch (IOException e) {
+//            Send2Server(Buf);
+            Intent intent = new Intent();
+            intent.setAction(ConstUtils.ACTION_SEND);
+            intent.putExtra(ConstUtils.BROADCAST_BUFF, Buf);
+            getActivity().sendBroadcast(intent);
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        editor.commit();
-    }
-
-
-    private void setMyTable() {
-        mLinPutLable.removeAllViews();
-        GetRowColumns();
-        mMyTable = new MyTable(mContext, mLinPutLable.getWidth(), mLinPutLable.getHeight());
-        mMyTable.mySetRows(Rs);
-        mMyTable.mySetCols(Cs);
-        mMyTable.LoadTable();
-        mLinPutLable.addView(mMyTable);
-
-        mMyTable.setTableOnTouchListener(new MyTable.OnTableTouchListener() {
-            @Override
-            public void onTableTouchListener(View v, MotionEvent event) {
-                SeltArea = mMyTable.myGetSeltArea();
-                if (SeltArea[0] != 0) {
-                    Log.e("SelectedArea: ", String.valueOf(SeltArea[0]) + ":" + String.valueOf(SeltArea[1]) + "===" + String.valueOf(SeltArea[2]) + ":" + String.valueOf(SeltArea[3]));
-                }
-                mListScreenBeen = mMyTable.getScreenInputSelectItemIndex();
-                if (mListScreenBeen.size() == 1)showScreenInfo();
-                for (ScreenInputBean screenBean : mListScreenBeen) {
-                    Log.e("坐标:::", screenBean.getRow() + "-" + screenBean.getColumn());
-                }
-            }
-        });
-
-    }
-
-    byte[] GetRowColumns() {
-        Irs = SeltArea[0];
-        Ics = SeltArea[1];
-        Ire = SeltArea[2];
-        Ice = SeltArea[3];
-
-        //Rs = spRsum.getSelectedItemPosition() + 1;
-        // Cs = spCsum.getSelectedItemPosition() + 1;
-
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(ConstUtils.SP_ROWS, Rs);
-        editor.putInt(ConstUtils.SP_COLUMNS, Cs);
-        editor.commit();
-
-        return new byte[]{(byte) Irs, (byte) Ics, (byte) Ire, (byte) Ice};
-    }
-
-    void showScreenInfo() {
-        LogUtil.e("进到showScreenInfo方法:"+"外部");
-        if (mListScreenBeen.size() == 1) {
-            ScreenInputBean screenBean = mListScreenBeen.get(0);
-            LogUtil.e("进到showScreenInfo方法:"+"内部true");
-            for (int i=0;i<mListScreenApp.size();i++) {
-                if (screenBean.getRow()==mListScreenApp.get(i).getRow()&&screenBean.getColumn()==mListScreenApp.get(i).getColumn()){
-                    LogUtil.e("进到showScreenInfo方法:"+"相等");
-                    /**
-                     *  mMatrixCateTv = (TextView) inflateView.findViewById(R.id.tv_matirx_category);
-                     mMatrixSwitchTv = (TextView) inflateView.findViewById(R.id.tv_matirx_switch);
-                     mInputNameTv = (TextView) inflateView.findViewById(R.id.tv_inputname);
-                     mUseMatrixTv = (TextView) inflateView.findViewById(R.id.tv_usematirx);
-                     mSingleScreenTv = (TextView) inflateView.findViewById(R.id.tv_singlescreen);
-                     */
-                    mMatrixCateTv.setText(mListScreenApp.get(i).getSignalSource() + "");
-                    mMatrixSwitchTv.setText(mListScreenApp.get(i).getSwitchCate() + "");
-                    mInputNameTv.setText(mListScreenApp.get(i).getInputName() + "");
-                    mUseMatrixTv.setText(mListScreenApp.get(i).isUseMatrix()+"");
-                    LogUtil.e("进到showScreenInfo方法:"+mListScreenApp.get(i).toString());
-                    return;
-                }else {
-                    LogUtil.e("进到showScreenInfo方法:"+"内部false");
-                    mMatrixCateTv.setText("");
-                    mMatrixSwitchTv.setText("");
-                    mInputNameTv.setText("");
-                    mUseMatrixTv.setText("");
-                    mSingleScreenTv.setText("");
-                }
-            }
         }
     }
 
@@ -282,11 +194,98 @@ public class InputControlFragment extends BaseFragment implements View.OnTouchLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_set_input:
-                if (mInputSerttingDialog != null) {
-                    mInputSerttingDialog.show();
-                }
+        switch (v.getId()) {
+            case R.id.btn_turn_up:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrFWall);
+                break;
+            case R.id.btn_mute:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrMute);
+                break;
+            case R.id.btn_turn_down:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrSWall);
+                break;
+            case R.id.btn_play:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrPlay);
+                break;
+            case R.id.btn_pause:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrPause);
+                break;
+            case R.id.btn_stop:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrStop);
+                break;
+            case R.id.btn_exit:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrExit);
+                break;
+            case R.id.btn_up:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrTop);
+                break;
+            case R.id.btn_confirm:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrEnter);
+                break;
+            case R.id.btn_left:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrLeft);
+                break;
+            case R.id.btn_menu:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrMenu);
+                break;
+            case R.id.btn_right:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrRight);
+                break;
+            case R.id.btn_freeze:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrFreeze);
+                break;
+            case R.id.btn_down:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrBottom);
+                break;
+            case R.id.btn_rotate:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrTurn);
+                break;
+            case R.id.btn_tatted_code:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrID);
+                break;
+            case R.id.btn_position:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrPos);
+                break;
+            case R.id.btn_color:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrColor);
+                break;
+            case R.id.btn_signalsource:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrSource);
+                break;
+            case R.id.btn_num_00:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir0);
+                break;
+            case R.id.btn_info:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.IrInfo);
+                break;
+            case R.id.btn_num_01:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir1);
+                break;
+            case R.id.btn_num_02:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir2);
+                break;
+            case R.id.btn_num_03:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir3);
+                break;
+            case R.id.btn_num_04:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir4);
+                break;
+            case R.id.btn_num_05:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir5);
+                break;
+            case R.id.btn_num_06:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir6);
+                break;
+            case R.id.btn_num_07:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir7);
+                break;
+            case R.id.btn_num_08:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir8);
+                break;
+            case R.id.btn_num_09:
+                TestCmd(addr, ClsCmds.IrMode, ClsCmds.EmptyValue, ClsCmds.Ir9);
+                break;
+            default:
                 break;
         }
 

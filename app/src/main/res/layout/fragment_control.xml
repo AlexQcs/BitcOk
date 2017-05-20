@@ -148,16 +148,19 @@
                                     />
 
                                 <Button
+                                    android:id="@+id/btnDP"
+                                    style="@style/RemoterButton"
+                                    android:layout_column="1"
+                                    android:visibility="visible"
+                                    android:clickable="false"
+                                    android:text=""/>
+                                <Button
                                     android:id="@+id/btnAV2"
                                     style="@style/RemoterButton"
                                     android:layout_column="1"
                                     android:text="AV2"/>
 
-                                <Button
-                                    android:id="@+id/btnDP"
-                                    style="@style/RemoterButton"
-                                    android:layout_column="2"
-                                    android:text="DP"/>
+
                             </TableRow>
                         </TableLayout>
 
@@ -171,14 +174,15 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:orientation="vertical"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:text="矩阵设置"
-                            style="@style/FunctionCateTextView"/>
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
                         <include layout="@layout/layout_input_setting"/>
-                        <include layout="@layout/layout_control"></include>
+
+                        <TextView
+                            style="@style/FunctionCateTextView"
+                            android:text="矩阵设置"/>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -187,11 +191,25 @@
                         android:background="#ffffff"
                         android:orientation="vertical">
                         <!--android:background="@drawable/boder"-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            >
 
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:text="模式调用"
-                            style="@style/FunctionCateTextView"/>
+                            <TextView
+                                android:id="@+id/tv_mode"
+                                style="@style/FunctionCateTextView"
+                                android:text="模式调用"/>
+
+                            <Switch
+                                android:id="@+id/switch_recall_save"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+
+                                android:layout_marginLeft="20dp"/>
+                        </LinearLayout>
+
 
                         <TableLayout
                             android:layout_width="fill_parent"

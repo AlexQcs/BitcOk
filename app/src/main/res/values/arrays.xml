@@ -2,24 +2,35 @@
 <resources>
     
     <string-array name="matrix_category">
-        <item>未定义</item>
-        <item>HDMI</item>
+        <item>AV</item>
+        <item>AV2</item>
+        <!--<item>AV3</item>-->
+        <!--<item>AV4</item>-->
+        <!--<item>QUAD</item>-->
+        <!--<item>Svideo</item>-->
+        <!--<item>YPBPR</item>-->
         <item>VGA</item>
         <item>DVI</item>
-        <item>YPbPr</item>
+        <item>HDMI</item>
+        <!--<item>HDMI2</item>-->
+        <!--<item>HDMI3</item>-->
+        <!--<item>DMP1</item>-->
+        <!--<item>DMP2</item>-->
+        <!--<item>USB</item>-->
+        <!--<item>DP</item>-->
     </string-array>
     
     <string-array name="matrix_fac">
-        <item>未定义</item>
         <item>GTC001</item>
         <item>GTC002</item>
+        <item>VGAMT</item>
         <item>HDMI0808</item>
     </string-array>
 
     <string-array name="matrix_switch">
-        <item>视频</item>
-        <item>音频</item>
-        <item>视频+音频</item>
+        <item>A</item>
+        <item>V</item>
+        <item>AV</item>
     </string-array>
 
 

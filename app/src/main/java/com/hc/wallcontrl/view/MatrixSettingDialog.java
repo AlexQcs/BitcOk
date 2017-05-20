@@ -212,9 +212,6 @@ public class MatrixSettingDialog extends Dialog {
 
         mMatrixCateSpinner.setAdapter(mCateAdapter);
         mMatrixFacSpinner.setAdapter(mFacAdapter);
-        mStreamDropEdit.setAdapter(mStreamAdapter);
-        mInputNameDropEdit.setAdapter(mInputNameAdapter);
-
 
     }
 

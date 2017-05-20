@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.adapter.MyTableAdapter;
 import com.hc.wallcontrl.bean.ScreenInputBean;
-import com.hc.wallcontrl.bean.ScreenMatrixBean;
+import com.hc.wallcontrl.bean.ScreenOutputBean;
 
 import java.util.ArrayList;
 
@@ -49,15 +49,15 @@ public class MyTable extends LinearLayout {
     protected OnTableClickListener clickListener;//整个分页控件被点击时的回调函数
     protected OnTableTouchListener touchListener;//分页触摸回调函数
 
-    public ArrayList<ScreenMatrixBean> getListScreenBeen() {
+    public ArrayList<ScreenOutputBean> getListScreenBeen() {
         return mListScreenBeen;
     }
 
-    public void setListScreenBeen(ArrayList<ScreenMatrixBean> listScreenBeen) {
+    public void setListScreenBeen(ArrayList<ScreenOutputBean> listScreenBeen) {
         mListScreenBeen = listScreenBeen;
     }
 
-    private ArrayList<ScreenMatrixBean> mListScreenBeen;
+    private ArrayList<ScreenOutputBean> mListScreenBeen;
 
     public MyTable(Context context) {
         super(context);
@@ -125,15 +125,16 @@ public class MyTable extends LinearLayout {
     }
 
     //返回被选中的格子
-    public ArrayList<ScreenMatrixBean> getScreenMatrixSelectItemIndex() {
-        ArrayList<ScreenMatrixBean> mScreenMatrixList = new ArrayList<>();
+    public ArrayList<ScreenOutputBean> getScreenMatrixSelectItemIndex() {
+        ArrayList<ScreenOutputBean> mScreenMatrixList = new ArrayList<>();
         myGetSeltArea();
         for (int r = 0; r < TableRows; r++) {
             for (int c = 0; c < TableCols; c++) {
                 if (r >= rs - 1 && r <= re - 1 && c >= cs - 1 && c <= ce - 1) {
-                    ScreenMatrixBean screenBean=new ScreenMatrixBean();
+                    ScreenOutputBean screenBean=new ScreenOutputBean();
                     screenBean.setColumn(c+1);
                     screenBean.setRow(r+1);
+                    screenBean.setMatrixOutputStream(TableRows*r+c+1);
                     mScreenMatrixList.add(screenBean);
                     screenBean=null;
                 }

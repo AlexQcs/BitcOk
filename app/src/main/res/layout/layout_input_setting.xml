@@ -8,7 +8,7 @@
         android:id="@+id/switch_usematrix"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="使用矩阵:"
+        android:text="不使用矩阵:"
         android:textColor="@color/PrimaryText"
         />
 

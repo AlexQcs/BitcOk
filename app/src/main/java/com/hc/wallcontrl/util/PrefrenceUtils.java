@@ -1,5 +1,7 @@
 package com.hc.wallcontrl.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -37,8 +39,34 @@ public class PrefrenceUtils {
                 byteArrayInputStream);
         List SceneList = (List) objectInputStream
                 .readObject();
-        objectInputStream.close();
+
         return SceneList;
+    }
+
+    public String[] getSharedPreference(Context context, String key) {
+        String regularEx = "#";
+        String[] str = null;
+        SharedPreferences sp = context.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
+        String values;
+        values = sp.getString(key, "");
+        str = values.split(regularEx);
+
+        return str;
+    }
+
+    public void setSharedPreference(Context context,String key, String[] values) {
+        String regularEx = "#";
+        String str = "";
+        SharedPreferences sp = context.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
+        if (values != null && values.length > 0) {
+            for (String value : values) {
+                str += value;
+                str += regularEx;
+            }
+            SharedPreferences.Editor et = sp.edit();
+            et.putString(key, str);
+            et.commit();
+        }
     }
 
 }

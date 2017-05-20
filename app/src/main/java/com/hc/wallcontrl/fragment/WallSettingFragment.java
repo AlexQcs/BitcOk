@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.bean.ScreenInputBean;
-import com.hc.wallcontrl.bean.ScreenMatrixBean;
+import com.hc.wallcontrl.bean.ScreenOutputBean;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.util.ConstUtils;
 import com.hc.wallcontrl.util.PrefrenceUtils;
@@ -43,7 +43,7 @@ public class WallSettingFragment extends BaseFragment {
     private Button mBtnSetTable;
     private LinearLayout mLinTable;
     private int mRows = 4, mColumns = 4;
-    private ArrayList<ScreenMatrixBean> mListScreenMatrix;
+    private ArrayList<ScreenOutputBean> mListScreenMatrix;
     private ArrayList<ScreenInputBean> mListScreenInput;
     private MyTable mMyTable;
 
@@ -154,12 +154,15 @@ public class WallSettingFragment extends BaseFragment {
         mListScreenInput=new ArrayList<>();
         for (int i = 0; i < mRows; i++) {
             for (int j = 0; j < mColumns; j++) {
-                ScreenMatrixBean screenMatrixBean=new ScreenMatrixBean();
+                ScreenOutputBean screenMatrixBean=new ScreenOutputBean();
                 ScreenInputBean screenInputBean=new ScreenInputBean();
                 screenMatrixBean.setColumn(j+1);
                 screenMatrixBean.setRow(i+1);
+                screenMatrixBean.setMatrixOutputStream(mRows*i+j+1);
+
                 screenInputBean.setColumn(j+1);
                 screenInputBean.setRow(i+1);
+
                 mListScreenMatrix.add(screenMatrixBean);
                 mListScreenInput.add(screenInputBean);
                 screenMatrixBean=null;
@@ -170,7 +173,7 @@ public class WallSettingFragment extends BaseFragment {
         SharedPreferences.Editor editor = mPreferences.edit();
         try {
             String listMatrixString= PrefrenceUtils.SceneList2String(mListScreenMatrix);
-            editor.putString(ConstUtils.SP_SCREEN_MATRIX_LIST, listMatrixString);
+            editor.putString(ConstUtils.SP_SCREEN_OUTPUT_LIST, listMatrixString);
             String listInputString=PrefrenceUtils.SceneList2String(mListScreenInput);
             editor.putString(ConstUtils.SP_SCREEN_INPUT_LIST,listInputString);
         } catch (IOException e) {

@@ -22,8 +22,9 @@ public class ConstUtils {
     public final static String SP_ROWS="rows";
     public final static String SP_COLUMNS="clumns";
     public final static String SP_ISCONN="isConn";
-    public final static String SP_SCREEN_MATRIX_LIST="creen_matrix_list";
+    public final static String SP_MATRIX_LIST="creen_matrix_list";
     public final static String SP_SCREEN_INPUT_LIST="screen_input_list";
+    public final static String SP_SCREEN_OUTPUT_LIST="screen_output_list";
     public final static String SP_IP="IP";
     public final static String SP_PORT="Port";
 
@@ -33,4 +34,9 @@ public class ConstUtils {
     public final static String BROADCAST_PORT="port";
     public final static String BROADCAST_BUFF="send_buff";
     public final static String BROADCAST_ISCONN="isconn";
+
+
+    //矩阵名称
+    public final static String VGAMT="vgamt";
+
 }
