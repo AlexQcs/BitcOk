@@ -14,6 +14,7 @@ public class ScreenInputBean implements Serializable {
     private String switchCate;//切换类型
     private boolean isUseMatrix;//是否使用矩阵
 
+
     public int getColumn() {
         return column;
     }

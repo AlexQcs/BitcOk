@@ -13,6 +13,9 @@ public class ScreenMatrixBean implements Serializable {
     private int delaytime;//命令延时
     private int inputQuan;//输入总数
     private List<String> matrixInputName;
+    private boolean hasSet;
+    private List<ScreenOutputBean> listOutputScreen;
+
 //    //A:0 v:1 AV:2
 //    private int matrixSwitch;
 //
@@ -24,6 +27,23 @@ public class ScreenMatrixBean implements Serializable {
 //        this.matrixSwitch = matrixSwitch;
 //    }
 
+
+    public List<ScreenOutputBean> getListOutputScreen() {
+        return listOutputScreen;
+    }
+
+    public void setListOutputScreen(List<ScreenOutputBean> listOutputScreen) {
+        this.listOutputScreen = listOutputScreen;
+    }
+
+    public boolean isHasSet() {
+        return hasSet;
+    }
+
+    public void setHasSet(boolean hasSet) {
+        this.hasSet = hasSet;
+    }
+
     public MatrixFactory getMatrixFactory() {
         return matrixFactory;
     }
@@ -31,6 +51,7 @@ public class ScreenMatrixBean implements Serializable {
     public void setMatrixFactory(MatrixFactory matrixFactory) {
         this.matrixFactory = matrixFactory;
     }
+
 
     public String getMatrixCategory() {
         return matrixCategory;

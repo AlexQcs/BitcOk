@@ -11,7 +11,7 @@
         <TextView
             style="@style/MatrixInfoTextView"
             android:entries="@array/matrix_fac"
-            android:text="输出通道:"/>
+            android:text="绑定输出:"/>
 
         <EditText
             android:id="@+id/dropetv_matrix_stream"

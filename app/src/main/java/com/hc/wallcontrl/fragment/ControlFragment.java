@@ -98,6 +98,9 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     private int Rs = 4;
     private int Cs = 4;
     private int[] SeltArea = new int[4];
+    //广播命令的地址
+    private byte[] mBroadAddr = new byte[4];
+
 
     MyTable mMyTable;
 
@@ -112,6 +115,8 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     private List<ScreenInputBean> mListScreenApp;
     private List<ScreenMatrixBean> mListMatrixApp;
     private List<ScreenOutputBean> mListOutputApp;
+
+    private boolean mIsMatrixHasSet = false;
     //Socket
     private Thread mThread = null;
     private Socket mSocket = null;
@@ -146,10 +151,6 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         intent.setClass(mContext, SocketService.class);
         mContext.startService(intent);
 
-
-
-
-
         mListScreenBeen = new ArrayList<>();
         sp = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         if (sp == null) return;
@@ -159,16 +160,17 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         mIPString = sp.getString(ConstUtils.SP_IP, mIPString);
         mPortString = sp.getString(ConstUtils.SP_PORT, "8899");
 
-        SeltArea[0]=1;
-        SeltArea[1]=1;
-        SeltArea[2]=Rs;
-        SeltArea[3]=Cs;
+        SeltArea[0] = SeltArea[1] = 1;
+        SeltArea[2] = Rs;
+        SeltArea[3] = Cs;
 
+        mBroadAddr[0] = mBroadAddr[1] = (byte) 0x00;
+        mBroadAddr[2] = mBroadAddr[3] = (byte) 0xff;
         for (int i = 0; i < Rs; i++) {
             for (int j = 0; j < Cs; j++) {
-                ScreenInputBean screenInputBean=new ScreenInputBean();
-                screenInputBean.setColumn(j+1);
-                screenInputBean.setRow(i+1);
+                ScreenInputBean screenInputBean = new ScreenInputBean();
+                screenInputBean.setColumn(j + 1);
+                screenInputBean.setRow(i + 1);
                 mListScreenBeen.add(screenInputBean);
             }
         }
@@ -179,11 +181,9 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         }
         String listBeanStr = sp.getString(ConstUtils.SP_SCREEN_INPUT_LIST, "");
         String listMatrixStr = sp.getString(ConstUtils.SP_MATRIX_LIST, "");
-        String listOutputStr=sp.getString(ConstUtils.SP_SCREEN_OUTPUT_LIST,"");
         try {
             mListScreenApp = PrefrenceUtils.String2SceneList(listBeanStr);
             mListMatrixApp = PrefrenceUtils.String2SceneList(listMatrixStr);
-            mListOutputApp=PrefrenceUtils.String2SceneList(listOutputStr);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -328,6 +328,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         btnHDMI = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnHDMI);
         btnAV2 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnAV2);
         btnDP = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnDP);
+
         btnPlan1 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnPlan1);
         btnPlan2 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnPlan2);
         btnPlan3 = (Button) inflateView.findViewById(com.hc.wallcontrl.R.id.btnPlan3);
@@ -358,7 +359,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
         btnDVI.setOnClickListener(this);
         btnHDMI.setOnClickListener(this);
         btnAV2.setOnClickListener(this);
-        btnDP.setOnClickListener(this);
+        btnDP.setClickable(false);
         btnPlan1.setOnClickListener(this);
         btnPlan2.setOnClickListener(this);
         btnPlan3.setOnClickListener(this);
@@ -374,7 +375,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 
 
         String[] inputMatrixArray = (String[]) mInputNameList.toArray(new String[mInputNameList.size()]);
-        mMatrixInputAdapter = new ArrayAdapter(mContext,android.R.layout.simple_spinner_item, inputMatrixArray);
+        mMatrixInputAdapter = new ArrayAdapter(mContext, android.R.layout.simple_spinner_item, inputMatrixArray);
         mMatrixInputSpinner.setAdapter(mMatrixInputAdapter);
         mMatrixInputSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -391,12 +392,13 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    mlinMatrixInput.setVisibility(View.GONE);
-                    mLinMatrixSwitch.setVisibility(View.GONE);
+                    mMatrixInputSpinner.setVisibility(View.INVISIBLE);
+                    mMatrixSwitchSpinner.setVisibility(View.INVISIBLE);
                 } else {
-                    mlinMatrixInput.setVisibility(View.VISIBLE);
-                    mLinMatrixSwitch.setVisibility(View.VISIBLE);
-
+                    if (mIsMatrixHasSet) {
+                        mMatrixInputSpinner.setVisibility(View.VISIBLE);
+                        mMatrixSwitchSpinner.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -440,9 +442,10 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 
         if (mListMatrixApp != null && mListMatrixApp.size() != 0) {
             mInputNameList = mListMatrixApp.get(0).getMatrixInputName();
+            mListOutputApp = mListMatrixApp.get(0).getListOutputScreen();
         } else {
             mMatrixInputSpinner.setVisibility(View.INVISIBLE);
-            mSetMatrixInputBtn.setClickable(false);
+//            mSetMatrixInputBtn.setClickable(false);
         }
 
         setMyTable();
@@ -473,12 +476,30 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
 
 
     private void showMatrixInfo(int index) {
-        if (mListMatrixApp == null || index >= mListMatrixApp.size()) return;
+        if (mListMatrixApp == null || index >= mListMatrixApp.size()) {
+            ToastUtil.showShortMessage("请先设置矩阵");
+            mMatrixInputSpinner.setVisibility(View.INVISIBLE);
+            mMatrixSwitchSpinner.setVisibility(View.INVISIBLE);
+            mIsMatrixHasSet = false;
+            return;
+        }
         ScreenMatrixBean screenMatrixBean = mListMatrixApp.get(index);
         mInputNameList = screenMatrixBean.getMatrixInputName();
+        mListOutputApp = screenMatrixBean.getListOutputScreen();
         String[] inputMatrixArray = (String[]) mInputNameList.toArray(new String[mInputNameList.size()]);
         mMatrixInputAdapter = new ArrayAdapter(mContext, android.R.layout.simple_spinner_item, inputMatrixArray);
         mMatrixInputSpinner.setAdapter(mMatrixInputAdapter);
+        if (screenMatrixBean.isHasSet()) {
+            if (!mUseMatrixSwitch.isChecked()) {
+                mMatrixInputSpinner.setVisibility(View.VISIBLE);
+                mMatrixSwitchSpinner.setVisibility(View.VISIBLE);
+            }
+            mIsMatrixHasSet = true;
+        } else {
+            mMatrixInputSpinner.setVisibility(View.INVISIBLE);
+            mMatrixSwitchSpinner.setVisibility(View.INVISIBLE);
+            mIsMatrixHasSet = false;
+        }
     }
 
     private byte[] GetRowColumns() {
@@ -499,7 +520,12 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     }
 
     private void TestCmd(byte[] addr, byte Fun, byte ValueH, byte ValueL) {
-        if (!bConnected) return;
+        if (!bConnected) {
+            Message message = new Message();
+            message.what = 0x12;
+            mToastHandler.sendMessage(message);
+            return;
+        }
 
         /*
         byte[] Buf = new byte[7];
@@ -573,6 +599,9 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
                 case 0x11:
                     String ip = msg.getData().getString("ip");
                     ToastUtil.showShortMessage(ip);
+                    break;
+                case 0x12:
+                    ToastUtil.showShortMessage("未连接局域网！");
                     break;
             }
         }
@@ -769,7 +798,6 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     void clientSetSource(int sourceIndex, byte SourceSw, byte bSFWall) {
         if (mListScreenApp != null && mListScreenBeen.size() > 0) {
             setMatrixInfo(mListScreenBeen, mListScreenApp);
-            if (!mUseMatrixSwitch.isChecked()) userMatrixCtrl();
             byte sourceByte = 0x00;
             switch (sourceIndex) {
                 case 0:
@@ -821,13 +849,13 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
             new Thread() {
                 public void run() {
                     try {
-                        Thread.sleep(500);
                         TestCmd(GetRowColumns(), SourceSw, finalSourceByte, bSFWall);
+                        Thread.sleep(500);
+                        if (!mUseMatrixSwitch.isChecked()) userMatrixCtrl();
                     } catch (InterruptedException e) {
                     }
                 }
             }.start();
-
         }
     }
 
@@ -840,16 +868,17 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     }
 
     void clientSetPlan(boolean isSave, int matrixData, byte data) {
-        matrixSetPlan(isSave, matrixData);
+
         new Thread() {
             public void run() {
                 try {
-                    Thread.sleep(500);
                     if (isSave) {
-                        TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.SavaPlan, data);
+                        TestCmd(mBroadAddr, ClsCmds.SavaPlan, ClsCmds.EmptyValue, data);
                     } else {
-                        TestCmd(GetRowColumns(), ClsCmds.EmptyValue, ClsCmds.RecallPlan, data);
+                        TestCmd(mBroadAddr, ClsCmds.RecallPlan, ClsCmds.EmptyValue, data);
                     }
+                    Thread.sleep(500);
+                    matrixSetPlan(isSave, matrixData);
                 } catch (InterruptedException e) {
                 }
             }
@@ -883,13 +912,13 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
     //使用矩阵控制
     private void userMatrixCtrl() {
         if (mListMatrixApp == null || mListMatrixApp.size() == 0) {
-            ToastUtil.showShortMessage("请先设置矩阵输入");
+            ToastUtil.showShortMessage("请先设置矩阵");
             return;
         } else if (mListScreenBeen == null || mListScreenBeen.size() == 0) {
             ToastUtil.showShortMessage("请先选择屏幕");
             return;
-        }else if (mListOutputApp==null||mListOutputApp.size()==0){
-            ToastUtil.showShortMessage("请先设置屏幕");
+        } else if (mListOutputApp == null || mListOutputApp.size() == 0) {
+            ToastUtil.showShortMessage("请先设置矩阵");
             return;
         }
         int[] input = new int[1];//矩阵输入
@@ -912,7 +941,7 @@ public class ControlFragment extends BaseFragment implements View.OnTouchListene
             }
         }
 
-        mMatrixName="";
+        mMatrixName = "";
         mSignalSource = mSignalSourceSpinner.getSelectedItem().toString();
         mMatrixInput = mMatrixInputSpinner.getSelectedItem().toString();
 

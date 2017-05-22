@@ -33,7 +33,6 @@ import com.hc.wallcontrl.view.MyTable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import rx.Observable;
@@ -79,7 +78,7 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
     private int Cs = 4;
 
     private ArrayList<ScreenOutputBean> mListScreenBeen;
-    private List<ScreenOutputBean> mListScreenApp;
+    private List<ScreenOutputBean> mListOutput;
     private List<String> mListInputName;
     private List<ScreenMatrixBean> mListMatrixApp;
 
@@ -116,11 +115,11 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
         Rs = sp.getInt(ConstUtils.SP_ROWS, Rs);
         Cs = sp.getInt(ConstUtils.SP_COLUMNS, Cs);
         bConnected = sp.getBoolean(ConstUtils.SP_ISCONN, bConnected);
-        String listBeanStr = sp.getString(ConstUtils.SP_SCREEN_OUTPUT_LIST, "");
+//        String listBeanStr = sp.getString(ConstUtils.SP_SCREEN_OUTPUT_LIST, "");
         String matrixListStr = sp.getString(ConstUtils.SP_MATRIX_LIST, "");
 
         try {
-            mListScreenApp = PrefrenceUtils.String2SceneList(listBeanStr);
+//             mListOutput = PrefrenceUtils.String2SceneList(listBeanStr);
             mListMatrixApp = PrefrenceUtils.String2SceneList(matrixListStr);
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,7 +134,8 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
             mListMatrixApp = new ArrayList<>();
             for (int i = 0; i < mCateArray.length; i++) {
                 ScreenMatrixBean temp = new ScreenMatrixBean();
-                List<String> listStr=new LinkedList<>();
+                List<String> listStr=new ArrayList<>();
+                List<ScreenOutputBean> listOutput=new ArrayList<>();
                 temp.setMatrixCategory(mCateArray[i]);
                 int inputQuan = Rs * Cs;
                 temp.setInputQuan(inputQuan);
@@ -145,18 +145,33 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
                 matrixFac.setAddr(0);
                 matrixFac.setMatrixName(mFacArray[0]);
                 temp.setMatrixFactory(matrixFac);
+                temp.setHasSet(false);
+
+                for (int r = 0; r < Rs; r++) {
+                    for (int c = 0; c < Cs; c++) {
+                        ScreenOutputBean screenOutputBean=new ScreenOutputBean();
+                        screenOutputBean.setColumn(c+1);
+                        screenOutputBean.setRow(r+1);
+                        screenOutputBean.setMatrixOutputStream(Cs*r+c+1);
+                        listOutput.add(screenOutputBean);
+                    }
+                }
+
                 //设置输入通道
                 for (int j = 0; j < inputQuan; j++) {
                     listStr.add("矩阵输入" + (j+1));
                 }
                 temp.setMatrixInputName(listStr);
-
+                temp.setListOutputScreen(listOutput);
                 mListMatrixApp.add(temp);
             }
             mListInputName=mListMatrixApp.get(mCateIndex).getMatrixInputName();
+            mListOutput=mListMatrixApp.get(mCateIndex).getListOutputScreen();
         }else {
             mListInputName=mListMatrixApp.get(mCateIndex).getMatrixInputName();
+            mListOutput=mListMatrixApp.get(mCateIndex).getListOutputScreen();
         }
+
 
     }
 
@@ -213,14 +228,13 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
 
         mMatrixFacSpinner.setAdapter(mFacAdapter);
         mInputNameDropEdit.setAdapter(mDropRecyclerAdapter);
+
 //        mInputNameDropEdit.setItemClickListener(new DropEditText.OnListViewItemClickListener() {
 //            @Override
 //            public void onClick(int position) {
 //                mInputIndex = position;
 //
 //            }
-
-
 //        });
         mSetMatrixBtn.setOnClickListener(this);
         setMyTable();
@@ -274,6 +288,7 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
         screenBean.setMatrixFactory(matrixFac);
         screenBean.setDelaytime(delay);
         screenBean.setMatrixInputName(mListInputName);
+        screenBean.setHasSet(true);
 
         targetList.set(index, screenBean);
 
@@ -301,7 +316,7 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
         mMyTable.setTableOnTouchListener(new MyTable.OnTableTouchListener() {
             @Override
             public void onTableTouchListener(View v, MotionEvent event) {
-                if (mListScreenApp == null || mListScreenApp.size() == 0) {
+                if ( mListOutput == null ||  mListOutput.size() == 0) {
                     ToastUtil.showShortMessage("第一次打开应用，请先设置屏幕数量！");
                     return;
                 }
@@ -330,6 +345,8 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
         mListInputName = screenBean.getMatrixInputName();
         String matrixFac = screenBean.getMatrixFactory().getMatrixName() + "";
         int quan=screenBean.getInputQuan();
+        mListOutput=screenBean.getListOutputScreen();
+        showScreenOutPutInfo();
 
         mAddrEtv.setText(addr);
         mDelayTimeEtv.setText(delay);
@@ -346,13 +363,12 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
         if (mListScreenBeen.size() == 1) {
             ScreenOutputBean screenBean = mListScreenBeen.get(0);
             LogUtil.e("进到showScreenInfo方法:" + "内部true");
-            for (int i = 0; i < mListScreenApp.size(); i++) {
-                if (screenBean.getRow() == mListScreenApp.get(i).getRow() && screenBean.getColumn() == mListScreenApp.get(i).getColumn()) {
+            for (int i = 0; i <  mListOutput.size(); i++) {
+                if (screenBean.getRow() ==  mListOutput.get(i).getRow() && screenBean.getColumn() ==  mListOutput.get(i).getColumn()) {
                     LogUtil.e("进到showScreenInfo方法:" + "相等");
-                    String outputName = mListScreenApp.get(i).getMatrixOutputStream() + "";
+                    String outputName =  mListOutput.get(i).getMatrixOutputStream() + "";
                     mStreamOutDropEdit.setText(outputName);
-
-                    LogUtil.e("进到showScreenInfo方法:" + mListScreenApp.get(i).toString());
+                    LogUtil.e("进到showScreenInfo方法:" +  mListOutput.get(i).toString());
                     return;
                 }
             }
@@ -419,9 +435,9 @@ public class MatrixFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_set_matrix:
-                if (mListScreenApp != null) {
+                if ( mListOutput != null) {
                     if (mListScreenBeen.size() == 1) {
-                        setScreenOutPutInfo(mListScreenBeen, mListScreenApp);
+                        setScreenOutPutInfo(mListScreenBeen,  mListOutput);
                     } else if (mListScreenBeen.size() > 1) {
                         ToastUtil.showShortMessage("请先选择一个屏幕且仅能选择一个！");
                     }

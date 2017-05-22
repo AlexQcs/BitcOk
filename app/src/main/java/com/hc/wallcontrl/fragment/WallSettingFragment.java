@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.hc.wallcontrl.R;
 import com.hc.wallcontrl.bean.ScreenInputBean;
+import com.hc.wallcontrl.bean.ScreenMatrixBean;
 import com.hc.wallcontrl.bean.ScreenOutputBean;
 import com.hc.wallcontrl.com.fragment.BaseFragment;
 import com.hc.wallcontrl.util.ConstUtils;
@@ -27,6 +28,7 @@ import com.hc.wallcontrl.view.MyTable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -43,8 +45,9 @@ public class WallSettingFragment extends BaseFragment {
     private Button mBtnSetTable;
     private LinearLayout mLinTable;
     private int mRows = 4, mColumns = 4;
-    private ArrayList<ScreenOutputBean> mListScreenMatrix;
+    private ArrayList<ScreenOutputBean> mListScreenOutput;
     private ArrayList<ScreenInputBean> mListScreenInput;
+    private List<ScreenMatrixBean> mListMatrixBean;
     private MyTable mMyTable;
 
     private Context mContext;
@@ -150,7 +153,7 @@ public class WallSettingFragment extends BaseFragment {
     void getRowsColumns() {
         mRows = mSpinnerRows.getSelectedItemPosition() + 1;
         mColumns = mSpinnerColumns.getSelectedItemPosition() + 1;
-        mListScreenMatrix=new ArrayList<>();
+        mListScreenOutput=new ArrayList<>();
         mListScreenInput=new ArrayList<>();
         for (int i = 0; i < mRows; i++) {
             for (int j = 0; j < mColumns; j++) {
@@ -158,24 +161,35 @@ public class WallSettingFragment extends BaseFragment {
                 ScreenInputBean screenInputBean=new ScreenInputBean();
                 screenMatrixBean.setColumn(j+1);
                 screenMatrixBean.setRow(i+1);
-                screenMatrixBean.setMatrixOutputStream(mRows*i+j+1);
+                screenMatrixBean.setMatrixOutputStream(mColumns*i+j+1);
 
                 screenInputBean.setColumn(j+1);
                 screenInputBean.setRow(i+1);
 
-                mListScreenMatrix.add(screenMatrixBean);
+                mListScreenOutput.add(screenMatrixBean);
                 mListScreenInput.add(screenInputBean);
                 screenMatrixBean=null;
                 screenInputBean=null;
             }
         }
+
+        if (mListMatrixBean!=null&&mListMatrixBean.size()!=0){
+            for (int i = 0; i < mListMatrixBean.size(); i++) {
+                mListMatrixBean.get(i).setListOutputScreen(mListScreenOutput);
+            }
+        }
+
         mPreferences = mContext.getSharedPreferences(ConstUtils.SHAREDPREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPreferences.edit();
         try {
-            String listMatrixString= PrefrenceUtils.SceneList2String(mListScreenMatrix);
-            editor.putString(ConstUtils.SP_SCREEN_OUTPUT_LIST, listMatrixString);
+            String listOutputString= PrefrenceUtils.SceneList2String(mListScreenOutput);
+            editor.putString(ConstUtils.SP_SCREEN_OUTPUT_LIST, listOutputString);
             String listInputString=PrefrenceUtils.SceneList2String(mListScreenInput);
             editor.putString(ConstUtils.SP_SCREEN_INPUT_LIST,listInputString);
+            if (mListMatrixBean!=null&&mListMatrixBean.size()!=0){
+                String listMatrixString=PrefrenceUtils.SceneList2String(mListMatrixBean);
+                editor.putString(ConstUtils.SP_MATRIX_LIST, listMatrixString);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -194,6 +208,14 @@ public class WallSettingFragment extends BaseFragment {
         if (mPreferences != null) {
             mRows = mPreferences.getInt(ConstUtils.SP_ROWS, 4);
             mColumns = mPreferences.getInt(ConstUtils.SP_COLUMNS, 4);
+            try {
+                String listMatrixStr=mPreferences.getString(ConstUtils.SP_MATRIX_LIST,"");
+                mListMatrixBean=PrefrenceUtils.String2SceneList(listMatrixStr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 

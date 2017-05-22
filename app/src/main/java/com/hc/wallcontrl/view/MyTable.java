@@ -116,10 +116,14 @@ public class MyTable extends LinearLayout {
         for (int r = 0; r < TableRows; r++)
             for (int c = 0; c < TableCols; c++) {
                 int idx = r * TableCols + c;
-                if (r >= rs - 1 && r <= re - 1 && c >= cs - 1 && c <= ce - 1)
-                    myTableColors[idx] = ContextCompat.getColor(myContext, R.color.LightPrimaryColor);
-                else
+                if (r >= rs - 1 && r <= re - 1 && c >= cs - 1 && c <= ce - 1){
+                    myTableColors[idx] = ContextCompat.getColor(myContext, R.color.dimgray);
+                }
+
+                else{
                     myTableColors[idx] = ContextCompat.getColor(myContext, R.color.PrimaryColor);
+                }
+
             }
         //*/
     }
@@ -134,7 +138,7 @@ public class MyTable extends LinearLayout {
                     ScreenOutputBean screenBean=new ScreenOutputBean();
                     screenBean.setColumn(c+1);
                     screenBean.setRow(r+1);
-                    screenBean.setMatrixOutputStream(TableRows*r+c+1);
+                    screenBean.setMatrixOutputStream(TableCols*r+c+1);
                     mScreenMatrixList.add(screenBean);
                     screenBean=null;
                 }
